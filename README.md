@@ -14,5 +14,5 @@ Alumnos
 
 Nahuel Delgado (LU 601/11) [nahueldelgado@gmail.com](mailto:nahueldelgado@gmail.com)  
 Leandro Lovisolo (LU 645/11) [leandro@leandro.me](mailto:leandro@leandro.me)  
-Lautaro José Petaccio (LU 443/11) [lausuper@gmail.com](mailto:lausuper@gmail.com)
+Lautaro José Petaccio (LU 443/11) [lausuper@gmail.com](mailto:lausuper@gmail.com)  
 Alejandro Rebecchi [alejandrorebecchi@gmail.com](mailto:alejandrorebecchi@gmail.com)
