@@ -1,0 +1,176 @@
+
+\documentclass[a4paper, 10pt, twoside]{article}
+
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-ucroman, es-noquoting]{babel}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem} % Provee macro \setlist
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage[toc, page]{appendix}
+
+
+%%%%%%%%%% Constantes - Inicio %%%%%%%%%%
+\newcommand{\titulo}{Trabajo Práctico 1}
+\newcommand{\materia}{Bases de datos}
+\newcommand{\integrantes}{Delgado · Lovisolo · Petaccio · Rebecchi}
+\newcommand{\cuatrimestre}{Segundo Cuatrimestre de 2014}
+%%%%%%%%%% Constantes - Fin %%%%%%%%%%
+
+
+%%%%%%%%%% Configuración de Fancyhdr - Inicio %%%%%%%%%%
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\lhead{\titulo · \materia}
+\rhead{\integrantes}
+\renewcommand{\footrulewidth}{0.4pt}
+\cfoot{\thepage /\pageref{LastPage}}
+
+\fancypagestyle{caratula} {
+   \fancyhf{}
+   \cfoot{\thepage /\pageref{LastPage}}
+   \renewcommand{\headrulewidth}{0pt}
+   \renewcommand{\footrulewidth}{0pt}
+}
+%%%%%%%%%% Configuración de Fancyhdr - Fin %%%%%%%%%%
+
+
+%%%%%%%%%% Miscelánea - Inicio %%%%%%%%%%
+% Evita que el documento se estire verticalmente para ocupar el espacio vacío
+% en cada página.
+\raggedbottom
+
+% Separación entre párrafos.
+\setlength{\parskip}{0.5em}
+
+% Separación entre elementos de listas.
+\setlist{itemsep=0.5em}
+
+% Asigna la traducción de la palabra 'Appendices'.
+\renewcommand{\appendixtocname}{Apéndices}
+\renewcommand{\appendixpagename}{Apéndices}
+%%%%%%%%%% Miscelánea - Fin %%%%%%%%%%
+
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Carátula                                                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\thispagestyle{caratula}
+
+\begin{center}
+
+\includegraphics[height=2cm]{DC.png} 
+\hfill
+\includegraphics[height=2cm]{UBA.jpg} 
+
+\vspace{2cm}
+
+Departamento de Computación,\\
+Facultad de Ciencias Exactas y Naturales,\\
+Universidad de Buenos Aires
+
+\vspace{4cm}
+
+\begin{Huge}
+\titulo
+\end{Huge}
+
+\vspace{0.5cm}
+
+\begin{Large}
+\materia
+\end{Large}
+
+\vspace{1cm}
+
+\cuatrimestre
+
+\vspace{4cm}
+
+\begin{tabular}{|c|c|c|}
+\hline
+Apellido y Nombre & LU & E-mail\\
+\hline
+Delgado, Alejandro N.  & 601/11 & nahueldelgado@gmail.com\\
+Lovisolo, Leandro      & 645/11 & leandro@leandro.me\\
+Petaccio, Lautaro José & 443/11 & lausuper@gmail.com\\
+Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
+\hline
+\end{tabular}
+
+\end{center}
+
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DER                                                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Diagrama de Entidad Relación}
+
+\section{Modelo Relacional}
+
+\textbf{Facultad}\{\underline{id}, nombre\}
+
+\textbf{Empadronado}\{\underline{DNI}, nombre, fechaDeNacimiento\}
+
+\textbf{Alumno}\{\underline{\underline{id}}, fechaDeInscripcion\}
+
+\textbf{Graduado}\{\underline{\underline{id}}\}
+
+\textbf{Graduado de la UBA}\{\underline{\underline{id}}\}
+
+\textbf{Graduado de otra universidad}\{\underline{\underline{id}}, inicioActividades\}
+
+\textbf{Profesor}\{\underline{\underline{id}}, nacionalidadUniversidad\}
+
+\textbf{Profesor regular}\{\underline{\underline{id}}, nacionalidadUniversidad (underlined de fk)\}
+
+\textbf{Consejero Directivo}\{\underline{\underline{DNI}},\underline{períodoConsejeroDirectivo}, nombre, idAgrupación (underlined de fk)\}
+
+\textbf{Consejero Directivo por el Claustro de Profesores}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroDirectivo}}, idAgrupación (underlined de fk)\}
+
+\textbf{Consejero Directivo por el Claustro de Graduados}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroDirectivo}}, idAgrupación (underlined de fk)\}
+
+\textbf{Consejero Directivo por el Claustro de Estudiantes}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroDirectivo}}, idAgrupación (underlined de fk)\}
+
+\textbf{Agrupación política}\{\underline{idAgrupación}, nombre\}
+
+\textbf{sePresentaDurante}\{\underline{\underline{idAgrupación}},\underline{\underline{fecha}}\}
+
+\textbf{Calendario Electoral}\{\underline{fecha}\}
+
+\textbf{Decano}\{\underline{\underline{DNI}}, \underline{períodoDecano}\}
+
+\textbf{Consejero Superior}\{\underline{\underline{DNI}}, \underline{períodoConsejeroSuperior}\}
+
+\textbf{Consejero Superior por el Claustro de Profesores}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroSuperior}}\}
+
+\textbf{Consejero Superior por el Claustro de Graduados}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroSuperior}}\}
+
+\textbf{Consejero Superior por el Claustro de Estudiantes}\{\underline{\underline{DNI}},\underline{\underline{períodoConsejeroSuperior}}\}
+
+\textbf{Rector}\{\underline{\underline{DNI}}, \underline{períodoRector}\}
+
+\textbf{fueVotadoPorConsejerosDirectivos}\{\underline{\underline{DNI}}, \underline{\underline{períodoRector}}, \underline{\underline{períodoConsejeroDirectivo}}, \underline{\underline{DNI de votante?}}\}
+
+\end{document}
