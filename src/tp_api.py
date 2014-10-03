@@ -127,6 +127,12 @@ class model_test():
                               VALUES (?, ?, ?)''', (dni, periodo, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
+    def registrar_voto_a_consejero_superior(self, dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo):
+        self.execute_query('''INSERT INTO voto_a_consejero_superior
+                              (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo)
+                              VALUES (?, ?, ?, ?)''',
+                           (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo))
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################

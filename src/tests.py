@@ -294,6 +294,45 @@ class TestModel(unittest.TestCase):
         # Verificar que se haya creado la entrada en la tabla del claustro correspondiente
         self.assertSelectIsNotEmpty('''SELECT * FROM %s
                                        WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
+    
+    def test_registrar_voto_a_consejero_superior(self):
+        dni_consejero_superior = 123
+        periodo_consejero_superior = 2014
+        nombre_consejero_superior = 'Consejero Superior'
+        dni_consejero_directivo = 456
+        periodo_consejero_directivo = 2014
+        nombre_consejero_directivo = 'Consejero Directivo'
+        nombre_agrupacion_politica = u'Agrupación'
+
+        self.model.empadronar_alumno(dni_consejero_superior, nombre_consejero_superior)
+        self.model.empadronar_alumno(dni_consejero_directivo, nombre_consejero_directivo)
+        self.model.crear_consejero_superior(dni_consejero_superior, periodo_consejero_superior)
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
+        self.model.crear_consejero_directivo(dni_consejero_directivo, periodo_consejero_directivo, id_agrupacion_politica)
+
+        # Asegurar que sea imposible registrar un voto de un consejero directivo inexistente a un consejero superior inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_consejero_superior(0, 0, 0, '')
+
+        # Asegurar que sea imposible registrar un voto de un consejero directivo inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_consejero_superior(dni_consejero_superior, periodo_consejero_superior, 0, 0)
+
+        # Asegurar que sea imposible registrar un voto de a un consejero superior inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_consejero_superior(0, 0, dni_consejero_directivo, periodo_consejero_directivo)
+
+        self.model.registrar_voto_a_consejero_superior(dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Asegurar que no se pueda registrar el mismo voto más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_consejero_superior(dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Verificar que se haya creado la entrada en la tabla voto_a_consejero_superior
+        self.assertSelectIsNotEmpty('''SELECT * FROM voto_a_consejero_superior WHERE
+                                       dni_consejero_superior = ? AND periodo_consejero_superior = ? AND
+                                       dni_consejero_directivo = ? AND periodo_consejero_directivo = ?''',
+                                    (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo))
 
     ################################################################################
     # Aserciones auxiliares                                                        #
