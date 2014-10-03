@@ -1,8 +1,10 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+
 '''
 Created on 2014-08-26 15:11
 @summary: Base de Datos - 2 Cuatrimestre 2014 - TP1 API
 '''
+
 import time
 import sqlite3
 
@@ -65,7 +67,6 @@ class model_test():
             self.connector = connector
 
     def execute_query(self, query, parameters=()):
-        print query
         self.connector.query_without_result(query, parameters)
 
     def empadronar_alumno(self, dni, nombre): 
@@ -87,6 +88,13 @@ class model_test():
         self.execute_query('''INSERT INTO profesor_regular (dni)
                               VALUES (?)''', (dni,))
     
+    # Crea una agrupación y devuelve el ID que le fue asignado
+    def crear_agrupacion(self, nombre):
+        with self.connector as c:
+            c.execute('INSERT INTO agrupacion_politica (nombre) VALUES (?)', (nombre,))
+            return c.lastrowid
+
+
     # Funcion que afilia a una persona (dni_afiliante) a una agrupacion (id_agrupacion)
     def afiliar_a_agrupacion(self, dni_afiliante, id_agrupacion): pass
 

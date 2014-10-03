@@ -19,7 +19,7 @@ class TestModel(unittest.TestCase):
     def test_crear_facultad_por_defecto(self):
         self.model.empadronar_alumno(123, 'Alumno')
         self.assertSelectEquals('SELECT id, nombre FROM facultad', (),
-                                [1, api.NOMBRE_FACULTAD])
+                                (1, api.NOMBRE_FACULTAD))
 
     def test_empadronar_alumno(self):
         dni = 123
@@ -28,7 +28,7 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
-                                [nombre, api.TIPO_ESTUDIANTE])
+                                (nombre, api.TIPO_ESTUDIANTE))
 
         # Verificar que se haya creado la entrada en la tabla estudiante
         self.assertSelectIsNotEmpty('SELECT * FROM estudiante WHERE dni = ?', (dni,))
@@ -40,11 +40,11 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
-                                [nombre, api.TIPO_GRADUADO])
+                                (nombre, api.TIPO_GRADUADO))
 
         # Verificar que se haya creado la entrada en la tabla graduado
         self.assertSelectEquals('SELECT tipo FROM graduado WHERE dni = ?', (dni,),
-                                [api.TIPO_GRADUADO_UBA])
+                                (api.TIPO_GRADUADO_UBA,))
 
         # Verificar que se haya creado la entrada en la tabla graduado_uba
         self.assertSelectIsNotEmpty('SELECT * FROM graduado_uba WHERE dni = ?', (dni,))
@@ -57,14 +57,25 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
-                                [nombre, api.TIPO_PROFESOR])
+                                (nombre, api.TIPO_PROFESOR))
 
         # Verificar que se haya creado la entrada en la tabla profesor
         self.assertSelectEquals('SELECT nacionalidad_universidad, tipo FROM profesor WHERE dni = ?', (dni,),
-                                [api.NACIONALIDAD_UNIVERSIDAD_PROFESOR, api.TIPO_PROFESOR_REGULAR])
+                                (api.NACIONALIDAD_UNIVERSIDAD_PROFESOR, api.TIPO_PROFESOR_REGULAR))
 
         # Verificar que se haya creado la entrada en la tabla profesor_regular
         self.assertSelectIsNotEmpty('SELECT * FROM profesor_regular WHERE dni = ?', (dni,))
+
+    def test_crear_agrupacion(self):
+        nombre = u'Agrupación'
+
+        id = self.model.crear_agrupacion(nombre)
+
+        self.assertSelectEquals('SELECT nombre FROM agrupacion_politica WHERE id = ?', (id,), (nombre,))
+
+    ################################################################################
+    # Aserciones auxiliares                                                        #
+    ################################################################################
 
     # Ejecuta la consulta y verifica que el conjunto de filas devuelto sea no-vacío
     def assertSelectIsNotEmpty(self, query, parameters):
@@ -79,8 +90,8 @@ class TestModel(unittest.TestCase):
             c.execute(query, parameters)
             row = c.fetchone()
             self.assertIsNotNone(row)
-            for i in range(0, len(expected_row)):
-                self.assertEquals(row[i], expected_row[i])
+            self.assertEquals(row, expected_row)
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestModel)
+    unittest.TextTestRunner(verbosity=2).run(suite)
