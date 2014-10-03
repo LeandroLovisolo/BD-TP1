@@ -24,6 +24,11 @@ TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES = TIPO_ESTUDIANTE
 TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS   = TIPO_GRADUADO
 TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES  = TIPO_PROFESOR
 
+# Valores de la columna 'tipo' de la tabla 'consejero_superior'
+TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES = TIPO_ESTUDIANTE
+TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS   = TIPO_GRADUADO
+TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES  = TIPO_PROFESOR
+
 # Valor por defecto para la columna 'nombre' de la tabla 'facultad'
 NOMBRE_FACULTAD = 'Facultad de Ciencias Exactas y Naturales'
 
@@ -115,10 +120,16 @@ class model_test():
                               VALUES (?, ?, ?, ?)''',
                            (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo))
 
+    def crear_consejero_superior(self, dni, periodo):
+        claustro = self.obtener_claustro(dni)
+        tabla_claustro = self.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
+        self.execute_query('''INSERT INTO consejero_superior (dni, periodo, tipo)
+                              VALUES (?, ?, ?)''', (dni, periodo, claustro))
+        self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################
-
 
     # Funcion que afilia a una persona (dni_afiliante) a una agrupacion (id_agrupacion)
     def afiliar_a_agrupacion(self, dni_afiliante, id_agrupacion): pass
@@ -132,11 +143,9 @@ class model_test():
     # Funcion que emite un voto de un consejero (dni_votador) para un candidato (dni_candidato) de decano en la fecha=fecha
     def set_voto_para_decano(self,dni_consejero_votador, dni_candidato,cantidad_de_votos,fecha): pass
 
-
     ###############################################################################
     # Funciones privadas (no deben ser consumidas por fuera de la API)            #
     ###############################################################################
-
 
     def obtener_id_facultad_por_defecto(self):
         with self.connector as c:
@@ -168,5 +177,14 @@ class model_test():
             return 'consejero_directivo_claustro_graduados'
         if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
             return 'consejero_directivo_claustro_profesores'
+        raise Error('Claustro inválido')
+
+    def obtener_tabla_consejero_superior_dado_un_claustro(self, claustro):
+        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES:
+            return 'consejero_superior_claustro_estudiantes'
+        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS:
+            return 'consejero_superior_claustro_graduados'
+        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES:
+            return 'consejero_superior_claustro_profesores'
         raise Error('Claustro inválido')
 

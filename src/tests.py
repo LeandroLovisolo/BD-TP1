@@ -168,7 +168,7 @@ class TestModel(unittest.TestCase):
                                    WHERE dni = ? AND periodo = ?''', (dni, periodo),
                                 (id_agrupacion_politica, claustro))
 
-        # Verificar que se haya creado la entrada en la tabla consejero_directivo_claustro_graduados
+        # Verificar que se haya creado la entrada en la tabla del claustro correspondiente
         self.assertSelectIsNotEmpty('''SELECT * FROM %s
                                        WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
 
@@ -248,6 +248,52 @@ class TestModel(unittest.TestCase):
                                        dni_decano = ? AND periodo_decano = ? AND
                                        dni_consejero_directivo = ? AND periodo_consejero_directivo = ?''',
                                     (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo))
+
+    ################################################################################
+    # Consejo superior                                                             #
+    ################################################################################
+
+    def test_crear_consejero_superior_claustro_estudiantes(self):
+        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES)
+
+    def test_crear_consejero_superior_claustro_graduados(self):
+        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS)
+
+    def test_crear_consejero_superior_claustro_graduados(self):
+        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES)
+
+    def crear_consejero_superior(self, claustro):
+        dni = 123
+        nombre = 'Consejero'
+        periodo = 2014
+
+        # Asegurar que un DNI no empadronado no pueda ser consejero superior
+        with self.assertRaises(AssertionError):
+            self.model.crear_consejero_superior(dni, periodo)
+
+        # Empadronar el DNI en el padrón correspondiente
+        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES:
+            self.model.empadronar_alumno(dni, nombre)
+        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS:
+            self.model.empadronar_graduado(dni, nombre)
+        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES:
+            self.model.empadronar_profesor(dni, nombre)
+
+        self.model.crear_consejero_superior(dni, periodo)
+
+        # Asegurar que no se permita crear el mismo consejero superior dos veces
+        with self.assertRaises(IntegrityError):
+            self.model.crear_consejero_superior(dni, periodo)
+
+        tabla_claustro = self.model.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
+
+        # Verificar que se haya creado la entrada en la tabla consejero_superior
+        self.assertSelectEquals('''SELECT tipo FROM consejero_superior
+                                   WHERE dni = ? AND periodo = ?''', (dni, periodo), (claustro,))
+
+        # Verificar que se haya creado la entrada en la tabla del claustro correspondiente
+        self.assertSelectIsNotEmpty('''SELECT * FROM %s
+                                       WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
 
     ################################################################################
     # Aserciones auxiliares                                                        #
