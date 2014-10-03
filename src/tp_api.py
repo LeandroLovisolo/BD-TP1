@@ -36,9 +36,8 @@ class bd_connector():
     
     # Funcion que ejecuta queries sin esperar resultado y las comitea
     def query_without_result(self, query, parameters=()):
-        c = self.conn.cursor()
-        c.execute(query, parameters)
-        self.conn.commit()
+        with self as c:
+            c.execute(query, parameters)
 
     def __enter__(self):
         self.cur = self.conn.cursor()
