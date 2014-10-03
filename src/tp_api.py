@@ -90,9 +90,3 @@ class model_test():
 	
 	# Funcion que emite un voto de un consejero (dni_votador) para un candidato (dni_candidato) de decano en la fecha=fecha
 	def set_voto_para_decano(self,dni_consejero_votador, dni_candidato,cantidad_de_votos,fecha): pass
-	
-	
-tst = model_test()
-#tst.empadronar_alumno('11111111', 'alumno')
-tst.empadronar_profesor('22222222', 'profesor')
-tst.empadronar_graduado('33333333', 'graduado')

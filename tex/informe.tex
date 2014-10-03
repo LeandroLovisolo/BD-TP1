@@ -167,6 +167,51 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 
 \section{Diagrama de Entidad Relación}
 
+\subsection{Restricciones}
+
+\textbf{Consejero Directivo:}
+
+\begin{itemize}
+\item Para un periodo existen ocho representantes por los profesores, cuatro representantes por los graduados y cuatro representantes por los estudiantes.
+%\item Para un periodo, la suma de la cantidad de votos en una fecha, no supera la cantidad de empadronados (?)
+\item De los empadronados, solo profesores votan a consejeros directivos por el claustro de profesores
+\item De los empadronados, solo estudiantes votan a consejeros directivos por el claustro de estudiantes
+\item Solo pueden ser consejeros por el claustro de estudiantes, los estudiantes que tengan al menos un año desde la fecha de inscripcion
+\item De los empadronados, solo graduados votan a consejeros directivos por el claustro de graduados
+\item Si los graduados no son de la UBA, deben tener al menos un año de actividad para ser consejeros directivos
+\item Solo votan consejeros directivos empadronados de la misma facultad
+\end{itemize}
+
+\textbf{Decano:}
+
+\begin{itemize}
+\item Solo votan al decano consejeros directivos de la misma facultad
+%\item Solo votan al decano consejeros directivos del último período registrado
+\item Hay un decano por cada facultad por período
+\item Los decanos deben haber tenido mayor o igual a 9 votos y menor o igual a 16
+\end{itemize}
+
+\textbf{Consejero Superior:}
+
+\begin{itemize}
+\item Solo votan a consejeros superiores por el claustro de graduados, consejeros directivos por el claustro de graduados
+\item Solo votan a consejeros superiores por el claustro de profesores, consejeros directivos por el claustro de profesores
+\item Solo votan a consejeros superiores por el claustro de estudiantes, consejeros directivos por el claustro de estudiantes
+%\item Solo votan a consejeros superiores, consejeros directivos del último período registrado
+\item Solo pueden ser consejeros supueriores por el claustro de graduados, graduados
+\item Solo pueden ser consejeros supueriores por el claustro de profesores, profesores
+\item Solo pueden ser consejeros supueriores por el claustro de estudiantes, estudiantes
+\item Existen por período, cinco representantes por el claustro de profesores, cinco por el de graduados y cinco por el de estudiantes
+\end{itemize}
+
+\textbf{Rector:}
+
+\begin{itemize}
+\item Existen un solo rector por período
+%\item Solo votan al rector, decanos, consejeros directivos y consejeros superiores del último período de cada uno
+\item Obtuvo al menos la mitad más uno de los votos
+\item Ser ciudadano argentino, tener edad mayor o igual que 30 y ser profesor
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MR                                                                        %%
