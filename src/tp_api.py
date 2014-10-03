@@ -133,6 +133,9 @@ class model_test():
                               VALUES (?, ?, ?, ?)''',
                            (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo))
 
+    def crear_rector(self, dni, periodo):
+        self.execute_query('INSERT INTO rector (dni, periodo) VALUES (?, ?)', (dni, periodo))        
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################

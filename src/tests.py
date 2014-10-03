@@ -335,6 +335,44 @@ class TestModel(unittest.TestCase):
                                     (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo))
 
     ################################################################################
+    # Rector                                                                       #
+    ################################################################################
+
+    def test_crear_rector(self):
+        dni_inexistente = 0
+        dni_estudiante = 123
+        dni_graduado = 456
+        dni_profesor = 789
+        nombre = 'Empadronado'
+        periodo = 2014
+
+        self.model.empadronar_alumno(dni_estudiante, nombre)
+        self.model.empadronar_graduado(dni_graduado, nombre)
+        self.model.empadronar_profesor(dni_profesor, nombre)
+
+        # Asegurar que sea imposible crear un rector con un DNI no empadronado
+        with self.assertRaises(IntegrityError):
+            self.model.crear_rector(dni_inexistente, periodo)
+
+        # Asegurar que un estudiante no pueda ser rector
+        with self.assertRaises(IntegrityError):
+            self.model.crear_rector(dni_estudiante, periodo)
+
+        # Asegurar que un graduado no pueda ser rector
+        with self.assertRaises(IntegrityError):
+            self.model.crear_rector(dni_graduado, periodo)
+
+        self.model.crear_rector(dni_profesor, periodo)
+
+        # Asegurar que no se pueda crear un mismo rector más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.crear_rector(dni_profesor, periodo)
+
+        # Verificar que se haya creado la entrada en la tabla rector
+        self.assertSelectIsNotEmpty('SELECT * FROM rector WHERE dni = ? AND periodo = ?',
+                                    (dni_profesor, periodo))
+
+    ################################################################################
     # Aserciones auxiliares                                                        #
     ################################################################################
 
