@@ -147,6 +147,12 @@ class model_test():
                               VALUES (?, ?, ?, ?)''',
                            (dni_rector, periodo_rector, dni_consejero_superior, periodo_consejero_superior))
 
+    def registrar_voto_de_decano_a_rector(self, dni_rector, periodo_rector, dni_decano, periodo_decano):
+        self.execute_query('''INSERT INTO rector_fue_votado_por_decano
+                              (dni_rector, periodo_rector, dni_decano, periodo_decano)
+                              VALUES (?, ?, ?, ?)''',
+                           (dni_rector, periodo_rector, dni_decano, periodo_decano))
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################
