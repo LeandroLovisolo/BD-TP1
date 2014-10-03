@@ -20,11 +20,17 @@ class TestModel(unittest.TestCase):
 
         self.model.empadronar_alumno(dni, nombre)
         with self.connector as c:
-            c.execute('SELECT dni, tipo FROM empadronado WHERE dni = ?', (dni,))
+            # Verificar que se haya creado la entrada en la tabla empadronado
+            c.execute('SELECT dni, nombre, tipo FROM empadronado WHERE dni = ?', (dni,))
             row = c.fetchone()
             self.assertIsNotNone(row)
-            self.assertEquals(row[1], api.TIPO_ESTUDIANTE)
+            self.assertEquals(row[1], nombre)
+            self.assertEquals(row[2], api.TIPO_ESTUDIANTE)
 
+            # Verificar que se haya creado la entrada en la tabla estudiante
+            c.execute('SELECT dni FROM estudiante WHERE dni = ?', (dni,))
+            row = c.fetchone()
+            self.assertIsNotNone(row)
 
 if __name__ == '__main__':
     unittest.main()
