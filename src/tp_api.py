@@ -72,6 +72,10 @@ class model_test():
     def execute_query(self, query, parameters=()):
         self.connector.query_without_result(query, parameters)
 
+    ################################################################################
+    # Padrón electoral                                                             #
+    ################################################################################
+
     def empadronar_alumno(self, dni, nombre): 
         self.insertar_empadronado(dni, nombre, TIPO_ESTUDIANTE)
         self.execute_query('''INSERT INTO estudiante (dni, fecha_inscripcion)
@@ -91,6 +95,10 @@ class model_test():
         self.execute_query('''INSERT INTO profesor_regular (dni)
                               VALUES (?)''', (dni,))
     
+    ################################################################################
+    # Consejo directivo                                                            #
+    ################################################################################
+
     # Crea una agrupación y devuelve el ID que le fue asignado
     def crear_agrupacion_politica(self, nombre):
         with self.connector as c:
@@ -110,6 +118,10 @@ class model_test():
                               VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
+    ################################################################################
+    # Decano                                                                       #
+    ################################################################################
+
     def crear_decano(self, dni, periodo):
         self.execute_query('INSERT INTO decano (dni, periodo) VALUES (?, ?)', (dni, periodo))
 
@@ -118,6 +130,10 @@ class model_test():
                               (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo)
                               VALUES (?, ?, ?, ?)''',
                            (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo))
+
+    ################################################################################
+    # Consejo superior                                                             #
+    ################################################################################
 
     def crear_consejero_superior(self, dni, periodo):
         claustro = self.obtener_claustro(dni)
@@ -131,6 +147,10 @@ class model_test():
                               (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo)
                               VALUES (?, ?, ?, ?)''',
                            (dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo))
+
+    ################################################################################
+    # Rector                                                                       #
+    ################################################################################
 
     def crear_rector(self, dni, periodo):
         self.execute_query('INSERT INTO rector (dni, periodo) VALUES (?, ?)', (dni, periodo))        
