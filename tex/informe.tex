@@ -168,7 +168,7 @@ Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
 \textbf{Consejero Directivo por el Claustro de Profesores}\{\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
 \textbf{Consejero Directivo por el Claustro de Graduados}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
-
+	
 \textbf{Consejero Directivo por el Claustro de Estudiantes}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
 \textbf{Agrupación política}\{\fk{idAgrupación}, nombre\}
@@ -179,7 +179,11 @@ Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
 
 \textbf{Decano}\{\pkfk{DNI}, \underline{períodoDecano}\}
 
+\textbf{VotoADeacno}\{\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
+
 \textbf{Consejero Superior}\{\pkfk{DNI}, \underline{períodoConsejeroSuperior}\}
+
+\textbf{VotoAConsejeroSuperior}\{\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
 
 \textbf{Consejero Superior por el Claustro de Profesores}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
 
@@ -189,6 +193,10 @@ Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
 
 \textbf{Rector}\{\pkfk{DNI}, \underline{períodoRector}\}
 
-\textbf{fueVotadoPorConsejerosDirectivos}\{\pkfk{DNI}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNI de votante?}\}
+\textbf{fueVotadoPorConsejerosDirectivos}\{\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNIConsejeroDirectivo}\}
+
+\textbf{fueVotadoPorDecanos}\{\pkfk{DNIRector}, \pkfk{períodoDecano}, \pkfk{períodoDecano}, \pkfk{DNIDecano}\}
+
+\textbf{fueVotadoPorConsejerosSuperiores}\{\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroSuperior}\}
 
 \end{document}
