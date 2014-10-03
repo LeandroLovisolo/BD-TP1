@@ -1,8 +1,9 @@
-import tp_api
+from tp_api import model_test as mt
 import unittest
 
 class TestModel(unittest.TestCase):
-	pass
+	def setUp(self):
+		mt.empadronar_alumno("")
 
 
 if __name__ == '__main__':
