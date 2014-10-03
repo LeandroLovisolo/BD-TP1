@@ -153,17 +153,17 @@ Rebecchi, Alejandro & 15/10 & alejandrorebecchi@gmail.com\\
 
 \textbf{Estudiante}\{\pkfk{DNI}, fechaDeInscripcion\}
 
-\textbf{Graduado}\{\pkfk{DNI}\}
+\textbf{Graduado}\{\pkfk{DNI}, tipo\}
 
 \textbf{Graduado de la UBA}\{\pkfk{DNI}\}
 
 \textbf{Graduado de otra universidad}\{\pkfk{DNI}, inicioActividades\}
 
-\textbf{Profesor}\{\pkfk{DNI}, nacionalidadUniversidad\}
+\textbf{Profesor}\{\pkfk{DNI}, nacionalidadUniversidad, tipo\}
 
 \textbf{Profesor regular}\{\pkfk{DNI}, \fk{nacionalidadUniversidad}\}
 
-\textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
+\textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo\}
 
 \textbf{Consejero Directivo por el Claustro de Profesores}\{\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
@@ -181,7 +181,7 @@ Rebecchi, Alejandro & 15/10 & alejandrorebecchi@gmail.com\\
 
 \textbf{VotoADeacno}\{\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
 
-\textbf{Consejero Superior}\{\pkfk{DNI}, \underline{períodoConsejeroSuperior}\}
+\textbf{Consejero Superior}\{\pkfk{DNI}, \underline{períodoConsejeroSuperior}, tipo\}
 
 \textbf{VotoAConsejeroSuperior}\{\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
 
