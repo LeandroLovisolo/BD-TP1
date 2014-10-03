@@ -145,58 +145,65 @@ Rebecchi, Alejandro & 15/10 & alejandrorebecchi@gmail.com\\
 
 \section{Diagrama de Entidad Relación}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MR                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \section{Modelo Relacional}
 
-\textbf{Facultad}\{\underline{DNI}, nombre\}
+\textbf{Facultad}(\underline{DNI}, nombre)
 
-\textbf{Empadronado}\{\underline{DNI}, nombre, fechaDeNacimiento, tipo\}
 
-\textbf{Estudiante}\{\pkfk{DNI}, fechaDeInscripcion\}
+\textbf{Empadronado}(\underline{DNI}, nombre, fechaDeNacimiento, tipo)
 
-\textbf{Graduado}\{\pkfk{DNI}, tipo\}
+\textbf{Estudiante}(\pkfk{DNI}, fechaDeInscripcion)
 
-\textbf{Graduado de la UBA}\{\pkfk{DNI}\}
+\textbf{Graduado}(\pkfk{DNI}, tipo)
 
-\textbf{Graduado de otra universidad}\{\pkfk{DNI}, inicioActividades\}
+\textbf{Graduado de la UBA}(\pkfk{DNI})
 
-\textbf{Profesor}\{\pkfk{DNI}, nacionalidadUniversidad, tipo\}
+\textbf{Graduado de otra universidad}(\pkfk{DNI}, inicioActividades)
 
-\textbf{Profesor regular}\{\pkfk{DNI}, \fk{nacionalidadUniversidad}\}
+\textbf{Profesor}(\pkfk{DNI}, nacionalidadUniversidad, tipo)
 
-\textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo\}
+\textbf{Profesor regular}(\pkfk{DNI}, \fk{nacionalidadUniversidad})
 
-\textbf{Consejero Directivo por el Claustro de Profesores}\{\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
+\textbf{Consejero Directivo}(\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
 
-\textbf{Consejero Directivo por el Claustro de Graduados}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
+\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+
+\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
 	
-\textbf{Consejero Directivo por el Claustro de Estudiantes}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
+\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
 
-\textbf{Agrupación política}\{\fk{idAgrupación}, nombre\}
+\textbf{Agrupación política}(\fk{idAgrupación}, nombre)
 
-\textbf{sePresentaDurante}\{\pkfk{idAgrupación},\pkfk{fecha}\}
+\textbf{sePresentaDurante}(\pkfk{idAgrupación},\pkfk{fecha})
 
-\textbf{Calendario Electoral}\{\underline{fecha}\}
+\textbf{Calendario Electoral}(\underline{fecha})
 
-\textbf{Decano}\{\pkfk{DNI}, \underline{períodoDecano}\}
+\textbf{Decano}(\pkfk{DNI}, \underline{períodoDecano})
 
-\textbf{VotoADeacno}\{\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
+\textbf{VotoADeacno}(\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo})
 
-\textbf{Consejero Superior}\{\pkfk{DNI}, \underline{períodoConsejeroSuperior}, tipo\}
+\textbf{Consejero Superior}(\pkfk{DNI}, \underline{períodoConsejeroSuperior}, tipo)
 
-\textbf{VotoAConsejeroSuperior}\{\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo}\}
+\textbf{VotoAConsejeroSuperior}(\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo})
 
-\textbf{Consejero Superior por el Claustro de Profesores}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
+\textbf{Consejero Superior por el Claustro de Profesores}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-\textbf{Consejero Superior por el Claustro de Graduados}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
+\textbf{Consejero Superior por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-\textbf{Consejero Superior por el Claustro de Estudiantes}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
+\textbf{Consejero Superior por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-\textbf{Rector}\{\pkfk{DNI}, \underline{períodoRector}\}
+\textbf{Rector}(\pkfk{DNI}, \underline{períodoRector})
 
-\textbf{fueVotadoPorConsejerosDirectivos}\{\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNIConsejeroDirectivo}\}
+\textbf{fueVotadoPorConsejerosDirectivos}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNIConsejeroDirectivo})
 
-\textbf{fueVotadoPorDecanos}\{\pkfk{DNIRector}, \pkfk{períodoDecano}, \pkfk{períodoDecano}, \pkfk{DNIDecano}\}
+\textbf{fueVotadoPorDecanos}(\pkfk{DNIRector}, \pkfk{períodoDecano}, \pkfk{períodoDecano}, \pkfk{DNIDecano})
 
-\textbf{fueVotadoPorConsejerosSuperiores}\{\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroSuperior}\}
+\textbf{fueVotadoPorConsejerosSuperiores}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroSuperior})
 
 \end{document}
