@@ -211,11 +211,14 @@ PK = CK = FK = \{DNI\}
 PK = CK = FK = \{DNI\}
 
 
-\textbf{Profesor regular}(\pkfk{DNI}, \fk{nacionalidadUniversidad})
+\textbf{Profesor regular}(\pkfk{DNI})
 
-PK = CK = \{DNI\}
+PK = CK = FK \{DNI\}
 
-FK = \{DNI, nacionalidadUniversidad\}
+
+\textbf{Profesor adjunto}(\pkfk{DNI})
+
+PK = CK = FK \{DNI\}
 
 
 \textbf{Consejero Directivo}(\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
@@ -225,21 +228,21 @@ PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 FK = \{DNI, idAgrupación\}
 
 
-\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo})
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
 
-\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo})
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
 	
-\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo})
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
