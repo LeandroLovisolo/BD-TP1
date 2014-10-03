@@ -1,11 +1,5 @@
 # coding: utf-8
 
-'''
-Created on 2014-08-26 15:11
-@summary: Base de Datos - 2 Cuatrimestre 2014 - TP1 API
-'''
-
-import time
 import sqlite3
 
 # Clase para generar conexiones con la BD y ejecutar queries
@@ -65,11 +59,11 @@ class model_test():
 
     # Permite usar un conector distinto (ej.: a una base en memoria) desde los tests
     def __init__(self, connector=None):
-        if connector is None:
+        if connector is not None:
+            self.connector = connector
+        else:
             self.connector = bd_connector()
             self.connector.connect('../db/facultad')
-        else:
-            self.connector = connector
 
     def execute_query(self, query, parameters=()):
         self.connector.query_without_result(query, parameters)
