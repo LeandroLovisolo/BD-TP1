@@ -147,21 +147,21 @@ Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
 
 \section{Modelo Relacional}
 
-\textbf{Facultad}\{\underline{id}, nombre\}
+\textbf{Facultad}\{\underline{DNI}, nombre\}
 
 \textbf{Empadronado}\{\underline{DNI}, nombre, fechaDeNacimiento\}
 
-\textbf{Alumno}\{\pkfk{id}, fechaDeInscripcion\}
+\textbf{Estudiante}\{\pkfk{DNI}, fechaDeInscripcion\}
 
-\textbf{Graduado}\{\pkfk{id}\}
+\textbf{Graduado}\{\pkfk{DNI}\}
 
-\textbf{Graduado de la UBA}\{\pkfk{id}\}
+\textbf{Graduado de la UBA}\{\pkfk{DNI}\}
 
-\textbf{Graduado de otra universidad}\{\pkfk{id}, inicioActividades\}
+\textbf{Graduado de otra universidad}\{\pkfk{DNI}, inicioActividades\}
 
-\textbf{Profesor}\{\pkfk{id}, nacionalidadUniversidad\}
+\textbf{Profesor}\{\pkfk{DNI}, nacionalidadUniversidad\}
 
-\textbf{Profesor regular}\{\pkfk{id}, \fk{nacionalidadUniversidad}\}
+\textbf{Profesor regular}\{\pkfk{DNI}, \fk{nacionalidadUniversidad}\}
 
 \textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, nombre, \fk{idAgrupación}\}
 
