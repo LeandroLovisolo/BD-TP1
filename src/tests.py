@@ -72,6 +72,18 @@ class TestModel(unittest.TestCase):
 
         self.assertSelectEquals('SELECT nombre FROM agrupacion_politica WHERE id = ?', (id,), (nombre,))
 
+    def test_registrar_votos_eleccion_consejo_directivo(self):
+        nombre = u'Agrupación'
+        fecha = 2014
+        votos_recibidos = 10
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre)
+        self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
+
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE fecha = ?', (fecha,))
+        self.assertSelectEquals('''SELECT votos_recibidos FROM agrupacion_politica_se_presenta_durante_calendario_electoral
+                                   WHERE id_agrupacion_politica = ? AND fecha = ?''', (id_agrupacion_politica, fecha),
+                                (votos_recibidos,))
+
     def test_crear_consejero_directivo_claustro_estudiantes(self):
         self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES)
 

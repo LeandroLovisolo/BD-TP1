@@ -93,12 +93,26 @@ class model_test():
             c.execute('INSERT INTO agrupacion_politica (nombre) VALUES (?)', (nombre,))
             return c.lastrowid
 
+    def registrar_votos_eleccion_consejo_directivo(self, id_agrupacion_politica, fecha, votos_recibidos):
+        self.execute_query('INSERT OR IGNORE INTO calendario_electoral (fecha) VALUES (?)', (fecha,))
+        self.execute_query('''INSERT INTO agrupacion_politica_se_presenta_durante_calendario_electoral
+                              (id_agrupacion_politica, fecha, votos_recibidos)
+                              VALUES (?, ?, ?)''', (id_agrupacion_politica, fecha, votos_recibidos))
+
     def crear_consejero_directivo(self, dni, periodo, id_agrupacion_politica):
         claustro = self.obtener_claustro(dni)
         tabla_claustro = self.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
         self.execute_query('''INSERT INTO consejero_directivo (dni, periodo, id_agrupacion_politica, tipo)
                               VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
+
+
+
+
+    ###############################################################################
+    # Funciones requeridas por la cátedra aún no implementadas                    #
+    ###############################################################################
+
 
     # Funcion que afilia a una persona (dni_afiliante) a una agrupacion (id_agrupacion)
     def afiliar_a_agrupacion(self, dni_afiliante, id_agrupacion): pass
@@ -116,6 +130,7 @@ class model_test():
     ###############################################################################
     # Funciones privadas (no deben ser consumidas por fuera de la API)            #
     ###############################################################################
+
 
     def obtener_id_facultad_por_defecto(self):
         with self.connector as c:
