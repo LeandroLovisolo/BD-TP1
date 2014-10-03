@@ -22,13 +22,17 @@ class TestModel(unittest.TestCase):
     ################################################################################
 
     def test_se_crea_una_facultad_por_defecto(self):
+        # Al empadronarse un DNI se registra una facultad por defecto
         self.model.empadronar_alumno(123, 'Alumno')
+
+        # Verificar que se haya creado la entrada en la tabla facultad
         self.assertSelectEquals('SELECT id, nombre FROM facultad', (),
                                 (1, api.NOMBRE_FACULTAD))
 
     def test_empadronar_alumno(self):
         dni = 123
         nombre = 'Alumno'
+
         self.model.empadronar_alumno(dni, nombre)
 
         # Verificar que se respete la unicidad de DNIs
@@ -45,6 +49,7 @@ class TestModel(unittest.TestCase):
     def test_empadronar_graduado(self):
         dni = 123
         nombre = 'Graduado'
+
         self.model.empadronar_graduado(dni, nombre)
 
         # Verificar que se respete la unicidad de DNIs
@@ -65,6 +70,7 @@ class TestModel(unittest.TestCase):
     def test_empadronar_profesor(self):
         dni = 123
         nombre = 'Profesor'
+
         self.model.empadronar_profesor(dni, nombre)
 
         # Verificar que se respete la unicidad de DNIs
@@ -88,8 +94,10 @@ class TestModel(unittest.TestCase):
 
     def test_crear_agrupacion_politica(self):
         nombre = u'Agrupación'
+
         id = self.model.crear_agrupacion_politica(nombre)
 
+        # Verificar que se haya creado la entrada en la tabla agrupacion_politica
         self.assertSelectEquals('SELECT nombre FROM agrupacion_politica WHERE id = ?', (id,), (nombre,))
 
     def test_registrar_votos_eleccion_consejo_directivo(self):
@@ -108,6 +116,7 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
 
+        # Verificar que se hayan creado las entradas en las tablas correspondientes
         self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE fecha = ?', (fecha,))
         self.assertSelectEquals('''SELECT votos_recibidos FROM agrupacion_politica_se_presenta_durante_calendario_electoral
                                    WHERE id_agrupacion_politica = ? AND fecha = ?''', (id_agrupacion_politica, fecha),
@@ -124,9 +133,11 @@ class TestModel(unittest.TestCase):
 
     def crear_consejero_directivo(self, claustro):
         dni = 123
-        nombre = "Consejero"
+        nombre = 'Consejero'
         nombre_agrupacion_politica = u'Agrupación'
         periodo = 2014
+
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
 
         # Asegurar que un DNI no empadronado no pueda ser consejero directivo
         with self.assertRaises(AssertionError):
@@ -144,7 +155,6 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             self.model.crear_consejero_directivo(dni, periodo, 0)
 
-        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
         self.model.crear_consejero_directivo(dni, periodo, id_agrupacion_politica)
 
         # Asegurar que no se permita crear el mismo consejero directivo dos veces
@@ -171,7 +181,7 @@ class TestModel(unittest.TestCase):
         dni_estudiante = 123
         dni_graduado = 456
         dni_profesor = 789
-        nombre = "Empadronado"
+        nombre = 'Empadronado'
         periodo = 2014
 
         self.model.empadronar_alumno(dni_estudiante, nombre)
@@ -190,10 +200,54 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             self.model.crear_decano(dni_graduado, periodo)
 
-        # Asegurar que se cree correctamente si el DNI corresponde a un profesor
         self.model.crear_decano(dni_profesor, periodo)
+
+        # Asegurar que no se pueda crear un mismo decano más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.crear_decano(dni_profesor, periodo)
+
+        # Verificar que se haya creado la entrada en la tabla decano
         self.assertSelectIsNotEmpty('SELECT * FROM decano WHERE dni = ? AND periodo = ?',
                                     (dni_profesor, periodo))
+
+    def test_registrar_voto_a_decano(self):
+        dni_decano = 123
+        periodo_decano = 2014
+        nombre_decano = 'Decano'
+        dni_consejero_directivo = 456
+        periodo_consejero_directivo = 2014
+        nombre_consejero_directivo = 'Consejero Directivo'
+        nombre_agrupacion_politica = u'Agrupación'
+
+        self.model.empadronar_profesor(dni_decano, nombre_decano)
+        self.model.empadronar_alumno(dni_consejero_directivo, nombre_consejero_directivo)
+        self.model.crear_decano(dni_decano, periodo_decano)
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
+        self.model.crear_consejero_directivo(dni_consejero_directivo, periodo_consejero_directivo, id_agrupacion_politica)
+
+        # Asegurar que sea imposible registrar un voto de un consejero inexistente a un decano inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_decano(0, 0, 0, '')
+
+        # Asegurar que sea imposible registrar un voto de un consejero inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_decano(dni_decano, periodo_decano, 0, 0)
+
+        # Asegurar que sea imposible registrar un voto de a un decano inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_decano(0, 0, dni_consejero_directivo, periodo_consejero_directivo)
+
+        self.model.registrar_voto_a_decano(dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Asegurar que no se pueda registrar el mismo voto más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_a_decano(dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Verificar que se haya creado la entrada en la tabla voto_a_decano
+        self.assertSelectIsNotEmpty('''SELECT * FROM voto_a_decano WHERE
+                                       dni_decano = ? AND periodo_decano = ? AND
+                                       dni_consejero_directivo = ? AND periodo_consejero_directivo = ?''',
+                                    (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo))
 
     ################################################################################
     # Aserciones auxiliares                                                        #

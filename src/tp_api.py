@@ -109,6 +109,12 @@ class model_test():
     def crear_decano(self, dni, periodo):
         self.execute_query('INSERT INTO decano (dni, periodo) VALUES (?, ?)', (dni, periodo))
 
+    def registrar_voto_a_decano(self, dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo):
+        self.execute_query('''INSERT INTO voto_a_decano
+                              (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo)
+                              VALUES (?, ?, ?, ?)''',
+                           (dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo))
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################
