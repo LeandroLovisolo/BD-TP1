@@ -21,7 +21,7 @@ class TestModel(unittest.TestCase):
             row = c.fetchone()
             self.assertIsNotNone(row)
             self.assertEquals(row[0], 1)
-            self.assertEquals(row[1], api.NOMBRE_FACULTAD_POR_DEFECTO)
+            self.assertEquals(row[1], api.NOMBRE_FACULTAD)
 
     def test_empadronar_alumno(self):
         dni = 123
@@ -62,6 +62,31 @@ class TestModel(unittest.TestCase):
 
             # Verificar que se haya creado la entrada en la tabla graduado_uba
             c.execute('SELECT * FROM graduado_uba WHERE dni = ?', (dni,))
+            row = c.fetchone()
+            self.assertIsNotNone(row)
+
+    def test_empadronar_profesor(self):
+        dni = 123
+        nombre = 'Profesor'
+
+        self.model.empadronar_profesor(dni, nombre)
+        with self.connector as c:
+            # Verificar que se haya creado la entrada en la tabla empadronado
+            c.execute('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,))
+            row = c.fetchone()
+            self.assertIsNotNone(row)
+            self.assertEquals(row[0], nombre)
+            self.assertEquals(row[1], api.TIPO_PROFESOR)
+
+            # Verificar que se haya creado la entrada en la tabla profesor
+            c.execute('SELECT nacionalidad_universidad, tipo FROM profesor WHERE dni = ?', (dni,))
+            row = c.fetchone()
+            self.assertIsNotNone(row)
+            self.assertEquals(row[0], api.NACIONALIDAD_UNIVERSIDAD_PROFESOR)
+            self.assertEquals(row[1], api.TIPO_PROFESOR_REGULAR)
+
+            # Verificar que se haya creado la entrada en la tabla profesor_regular
+            c.execute('SELECT * FROM profesor_regular WHERE dni = ?', (dni,))
             row = c.fetchone()
             self.assertIsNotNone(row)
 

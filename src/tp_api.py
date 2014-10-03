@@ -23,7 +23,11 @@ TIPO_GRADUADO_OTRA_UNIVERSIDAD = 1
 TIPO_PROFESOR_REGULAR = 0
 TIPO_PROFESOR_ADJUNTO = 1
 
-NOMBRE_FACULTAD_POR_DEFECTO = 'Facultad de Ciencias Exactas y Naturales'
+# Valor por defecto para la columna 'nombre' de la tabla 'facultad'
+NOMBRE_FACULTAD = 'Facultad de Ciencias Exactas y Naturales'
+
+# Valor por defecto para la columna 'nacionalidad_universidad' de la tabla 'profesor'
+NACIONALIDAD_UNIVERSIDAD_PROFESOR = 'Argentina'
 
 class bd_connector():
     # Funcion que crea la conexion con su BD
@@ -79,8 +83,8 @@ class model_test():
 
     def empadronar_profesor(self, dni,nombre):  
         self.insertar_empadronado(dni, nombre, TIPO_PROFESOR)
-        self.execute_query('''INSERT INTO profesor (dni, nacionalidadUniversidad, tipo)
-                              VALUES (?, 'Argentina', ?)''', (dni, TIPO_PROFESOR_REGULAR))
+        self.execute_query('''INSERT INTO profesor (dni, nacionalidad_universidad, tipo)
+                              VALUES (?, ?, ?)''', (dni, NACIONALIDAD_UNIVERSIDAD_PROFESOR, TIPO_PROFESOR_REGULAR))
         self.execute_query('''INSERT INTO profesor_regular (dni)
                               VALUES (?)''', (dni,))
     
@@ -103,10 +107,10 @@ class model_test():
 
     def obtener_id_facultad_por_defecto(self):
         with self.connector as c:
-            c.execute('SELECT id FROM facultad WHERE nombre = ?', (NOMBRE_FACULTAD_POR_DEFECTO,))
+            c.execute('SELECT id FROM facultad WHERE nombre = ?', (NOMBRE_FACULTAD,))
             row = c.fetchone()
             if row is None:
-                c.execute('INSERT INTO facultad (nombre) VALUES (?)', (NOMBRE_FACULTAD_POR_DEFECTO,))
+                c.execute('INSERT INTO facultad (nombre) VALUES (?)', (NOMBRE_FACULTAD,))
                 id = c.lastrowid
             else:
                 id = row[0]
