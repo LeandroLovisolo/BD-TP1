@@ -25,6 +25,11 @@ TIPO_GRADUADO_OTRA_UNIVERSIDAD = 1
 TIPO_PROFESOR_REGULAR = 0
 TIPO_PROFESOR_ADJUNTO = 1
 
+# Valores de la columna 'tipo' de la tabla 'consejero_directivo'
+TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES = TIPO_ESTUDIANTE
+TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS   = TIPO_GRADUADO
+TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES  = TIPO_PROFESOR
+
 # Valor por defecto para la columna 'nombre' de la tabla 'facultad'
 NOMBRE_FACULTAD = 'Facultad de Ciencias Exactas y Naturales'
 
@@ -89,11 +94,17 @@ class model_test():
                               VALUES (?)''', (dni,))
     
     # Crea una agrupación y devuelve el ID que le fue asignado
-    def crear_agrupacion(self, nombre):
+    def crear_agrupacion_politica(self, nombre):
         with self.connector as c:
             c.execute('INSERT INTO agrupacion_politica (nombre) VALUES (?)', (nombre,))
             return c.lastrowid
 
+    def crear_consejero_directivo(self, dni, periodo, id_agrupacion_politica):
+        claustro = self.obtener_claustro(dni)
+        tabla_claustro = self.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
+        self.execute_query('''INSERT INTO consejero_directivo (dni, periodo, id_agrupacion_politica, tipo)
+                              VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
+        self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
     # Funcion que afilia a una persona (dni_afiliante) a una agrupacion (id_agrupacion)
     def afiliar_a_agrupacion(self, dni_afiliante, id_agrupacion): pass
@@ -127,3 +138,20 @@ class model_test():
         id_facultad = self.obtener_id_facultad_por_defecto()
         self.execute_query('''INSERT INTO empadronado (dni, nombre, id_facultad, tipo)
                               VALUES (?, ?, ?, ?)''', (dni, nombre, id_facultad, tipo))
+
+    def obtener_claustro(self, dni):
+        with self.connector as c:
+            c.execute('SELECT tipo FROM empadronado WHERE dni = ?', (dni,))
+            row = c.fetchone()            
+            assert(row is not None)
+            return row[0]
+
+    def obtener_tabla_consejero_directivo_dado_un_claustro(self, claustro):
+        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES:
+            return 'consejero_directivo_claustro_estudiantes'
+        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS:
+            return 'consejero_directivo_claustro_graduados'
+        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
+            return 'consejero_directivo_claustro_profesores'
+        raise Error('Claustro inválido')
+

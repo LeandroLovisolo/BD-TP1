@@ -66,12 +66,47 @@ class TestModel(unittest.TestCase):
         # Verificar que se haya creado la entrada en la tabla profesor_regular
         self.assertSelectIsNotEmpty('SELECT * FROM profesor_regular WHERE dni = ?', (dni,))
 
-    def test_crear_agrupacion(self):
+    def test_crear_agrupacion_politica(self):
         nombre = u'Agrupación'
-
-        id = self.model.crear_agrupacion(nombre)
+        id = self.model.crear_agrupacion_politica(nombre)
 
         self.assertSelectEquals('SELECT nombre FROM agrupacion_politica WHERE id = ?', (id,), (nombre,))
+
+    def test_crear_consejero_directivo_claustro_estudiantes(self):
+        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES)
+
+    def test_crear_consejero_directivo_claustro_graduados(self):
+        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS)
+
+    def test_crear_consejero_directivo_claustro_graduados(self):
+        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES)
+
+    def crear_consejero_directivo(self, claustro):
+        dni = 123
+        nombre = "Consejero"
+        nombre_agrupacion_politica = u'Agrupación'
+        periodo = 2014
+
+        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES:
+            self.model.empadronar_alumno(dni, nombre)
+        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS:
+            self.model.empadronar_graduado(dni, nombre)
+        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
+            self.model.empadronar_profesor(dni, nombre)
+
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
+        self.model.crear_consejero_directivo(dni, periodo, id_agrupacion_politica)
+
+        tabla_claustro = self.model.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
+
+        # Verificar que se haya creado la entrada en la tabla consejero_directivo
+        self.assertSelectEquals('''SELECT id_agrupacion_politica, tipo FROM consejero_directivo
+                                   WHERE dni = ? AND periodo = ?''', (dni, periodo),
+                                (id_agrupacion_politica, claustro))
+
+        # Verificar que se haya creado la entrada en la tabla consejero_directivo_claustro_graduados
+        self.assertSelectIsNotEmpty('''SELECT * FROM %s
+                                       WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
 
     ################################################################################
     # Aserciones auxiliares                                                        #
