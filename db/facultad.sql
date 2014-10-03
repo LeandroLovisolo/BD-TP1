@@ -17,41 +17,41 @@ CREATE TABLE `estudiante` (
     `dni`               INTEGER,
     `fecha_inscripcion` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES empadronado(dni)
+    FOREIGN KEY(dni) REFERENCES empadronado(dni) ON DELETE CASCADE
 );
 CREATE TABLE `graduado` (
     `dni`  INTEGER,
     `tipo` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES empadronado(dni)
+    FOREIGN KEY(dni) REFERENCES empadronado(dni) ON DELETE CASCADE
 );
 CREATE TABLE `graduado_uba` (
     `dni` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES graduado(dni)
+    FOREIGN KEY(dni) REFERENCES graduado(dni) ON DELETE CASCADE
 );
 CREATE TABLE `graduado_otra_universidad` (
     `dni`                INTEGER,
     `inicio_actividades` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES graduado(dni)
+    FOREIGN KEY(dni) REFERENCES graduado(dni) ON DELETE CASCADE
 );
 CREATE TABLE `profesor` (
     `dni`                      INTEGER,
     `nacionalidad_universidad` TEXT,
     `tipo`                     INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES empadronado(dni)
+    FOREIGN KEY(dni) REFERENCES empadronado(dni) ON DELETE CASCADE
 );
 CREATE TABLE `profesor_regular` (
     `dni` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES profesor(dni)
+    FOREIGN KEY(dni) REFERENCES profesor(dni) ON DELETE CASCADE
 );
 CREATE TABLE `profesor_adjunto` (
     `dni` INTEGER,
     PRIMARY KEY(dni),
-    FOREIGN KEY(dni) REFERENCES profesor(dni)
+    FOREIGN KEY(dni) REFERENCES profesor(dni) ON DELETE CASCADE
 );
 CREATE TABLE `agrupacion_politica` (
     `id`     INTEGER,
@@ -71,19 +71,19 @@ CREATE TABLE `consejero_directivo_claustro_estudiantes` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY (dni, periodo),
-    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo)
+    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo) ON DELETE CASCADE
 );
 CREATE TABLE `consejero_directivo_claustro_graduados` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY (dni, periodo),
-    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo)
+    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo) ON DELETE CASCADE
 );
 CREATE TABLE `consejero_directivo_claustro_profesores` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY (dni, periodo),
-    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo)
+    FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo) ON DELETE CASCADE
 );
 CREATE TABLE `calendario_electoral` (
     `fecha` INTEGER,
@@ -179,4 +179,5 @@ CREATE TABLE `rector_fue_votado_por_consejero_superior` (
     FOREIGN KEY(dni_rector, periodo_rector) REFERENCES rector(dni, periodo),
     FOREIGN KEY(dni_consejero_superior, periodo_consejero_superior) REFERENCES consejero_superior(dni, periodo)
 );
+PRAGMA foreign_keys = true;
 COMMIT;
