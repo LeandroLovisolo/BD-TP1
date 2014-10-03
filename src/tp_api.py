@@ -106,8 +106,8 @@ class model_test():
                               VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
-
-
+    def crear_decano(self, dni, periodo):
+        self.execute_query('INSERT INTO decano (dni, periodo) VALUES (?, ?)', (dni, periodo))
 
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #

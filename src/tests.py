@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import unittest
+from sqlite3 import IntegrityError
 import tp_api as api
 
 class TestModel(unittest.TestCase):
@@ -16,7 +17,11 @@ class TestModel(unittest.TestCase):
         # El modelo ahora usa la base en memoria en lugar del archivo facultad.db
         self.model = api.model_test(self.connector)
 
-    def test_crear_facultad_por_defecto(self):
+    ################################################################################
+    # Padrón electoral                                                             #
+    ################################################################################
+
+    def test_se_crea_una_facultad_por_defecto(self):
         self.model.empadronar_alumno(123, 'Alumno')
         self.assertSelectEquals('SELECT id, nombre FROM facultad', (),
                                 (1, api.NOMBRE_FACULTAD))
@@ -25,6 +30,10 @@ class TestModel(unittest.TestCase):
         dni = 123
         nombre = 'Alumno'
         self.model.empadronar_alumno(dni, nombre)
+
+        # Verificar que se respete la unicidad de DNIs
+        with self.assertRaises(IntegrityError):
+            self.model.empadronar_alumno(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
@@ -37,6 +46,10 @@ class TestModel(unittest.TestCase):
         dni = 123
         nombre = 'Graduado'
         self.model.empadronar_graduado(dni, nombre)
+
+        # Verificar que se respete la unicidad de DNIs
+        with self.assertRaises(IntegrityError):
+            self.model.empadronar_graduado(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
@@ -52,8 +65,11 @@ class TestModel(unittest.TestCase):
     def test_empadronar_profesor(self):
         dni = 123
         nombre = 'Profesor'
-
         self.model.empadronar_profesor(dni, nombre)
+
+        # Verificar que se respete la unicidad de DNIs
+        with self.assertRaises(IntegrityError):
+            self.model.empadronar_profesor(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
@@ -66,6 +82,10 @@ class TestModel(unittest.TestCase):
         # Verificar que se haya creado la entrada en la tabla profesor_regular
         self.assertSelectIsNotEmpty('SELECT * FROM profesor_regular WHERE dni = ?', (dni,))
 
+    ################################################################################
+    # Consejo directivo                                                            #
+    ################################################################################
+
     def test_crear_agrupacion_politica(self):
         nombre = u'Agrupación'
         id = self.model.crear_agrupacion_politica(nombre)
@@ -76,8 +96,17 @@ class TestModel(unittest.TestCase):
         nombre = u'Agrupación'
         fecha = 2014
         votos_recibidos = 10
+
+        # Asegurar que se requiera un ID de agrupación política válido
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_votos_eleccion_consejo_directivo(0, fecha, votos_recibidos)
+
         id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre)
         self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
+
+        # Asegurar que no se puedan registrar los votos más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
 
         self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE fecha = ?', (fecha,))
         self.assertSelectEquals('''SELECT votos_recibidos FROM agrupacion_politica_se_presenta_durante_calendario_electoral
@@ -99,6 +128,11 @@ class TestModel(unittest.TestCase):
         nombre_agrupacion_politica = u'Agrupación'
         periodo = 2014
 
+        # Asegurar que un DNI no empadronado no pueda ser consejero directivo
+        with self.assertRaises(AssertionError):
+            self.model.crear_consejero_directivo(dni, periodo, 0)
+
+        # Empadronar el DNI en el padrón correspondiente
         if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES:
             self.model.empadronar_alumno(dni, nombre)
         if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS:
@@ -106,8 +140,16 @@ class TestModel(unittest.TestCase):
         if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
             self.model.empadronar_profesor(dni, nombre)
 
+        # Asegurar que se requiera un ID de agrupación política válido
+        with self.assertRaises(IntegrityError):
+            self.model.crear_consejero_directivo(dni, periodo, 0)
+
         id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
         self.model.crear_consejero_directivo(dni, periodo, id_agrupacion_politica)
+
+        # Asegurar que no se permita crear el mismo consejero directivo dos veces
+        with self.assertRaises(IntegrityError):
+            self.model.crear_consejero_directivo(dni, periodo, id_agrupacion_politica)
 
         tabla_claustro = self.model.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
 
@@ -119,6 +161,39 @@ class TestModel(unittest.TestCase):
         # Verificar que se haya creado la entrada en la tabla consejero_directivo_claustro_graduados
         self.assertSelectIsNotEmpty('''SELECT * FROM %s
                                        WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
+
+    ################################################################################
+    # Decano                                                                       #
+    ################################################################################
+
+    def test_crear_decano(self):
+        dni_inexistente = 0
+        dni_estudiante = 123
+        dni_graduado = 456
+        dni_profesor = 789
+        nombre = "Empadronado"
+        periodo = 2014
+
+        self.model.empadronar_alumno(dni_estudiante, nombre)
+        self.model.empadronar_graduado(dni_graduado, nombre)
+        self.model.empadronar_profesor(dni_profesor, nombre)
+
+        # Asegurar que sea imposible crear un decano con un DNI no empadronado
+        with self.assertRaises(IntegrityError):
+            self.model.crear_decano(dni_inexistente, periodo)
+
+        # Asegurar que un estudiante no pueda ser decano
+        with self.assertRaises(IntegrityError):
+            self.model.crear_decano(dni_estudiante, periodo)
+
+        # Asegurar que un graduado no pueda ser decano
+        with self.assertRaises(IntegrityError):
+            self.model.crear_decano(dni_graduado, periodo)
+
+        # Asegurar que se cree correctamente si el DNI corresponde a un profesor
+        self.model.crear_decano(dni_profesor, periodo)
+        self.assertSelectIsNotEmpty('SELECT * FROM decano WHERE dni = ? AND periodo = ?',
+                                    (dni_profesor, periodo))
 
     ################################################################################
     # Aserciones auxiliares                                                        #

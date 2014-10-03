@@ -179,5 +179,5 @@ CREATE TABLE `rector_fue_votado_por_consejero_superior` (
     FOREIGN KEY(dni_rector, periodo_rector) REFERENCES rector(dni, periodo),
     FOREIGN KEY(dni_consejero_superior, periodo_consejero_superior) REFERENCES consejero_superior(dni, periodo)
 );
-PRAGMA foreign_keys = true;
 COMMIT;
+PRAGMA foreign_keys = 1;
