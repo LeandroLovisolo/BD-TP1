@@ -2,10 +2,6 @@
 
 import sqlite3
 
-# Clase para generar conexiones con la BD y ejecutar queries
-# se da un ejemplo incompleto con el motor SQLite, pueden  adaptarlo
-# a cualquiera de los motores permitidos
-
 # Valores de la columna 'tipo' de la tabla 'empadronado'
 TIPO_ESTUDIANTE = 0
 TIPO_GRADUADO   = 1
@@ -35,7 +31,11 @@ NOMBRE_FACULTAD = 'Facultad de Ciencias Exactas y Naturales'
 # Valor por defecto para la columna 'nacionalidad_universidad' de la tabla 'profesor'
 NACIONALIDAD_UNIVERSIDAD_PROFESOR = 'Argentina'
 
+# Clase para generar conexiones con la BD y ejecutar queries
+# se da un ejemplo incompleto con el motor SQLite, pueden  adaptarlo
+# a cualquiera de los motores permitidos
 class bd_connector():
+
     # Funcion que crea la conexion con su BD
     def connect(self, port='', username='', password='', bd='bd', host='localhost'):
         self.conn = sqlite3.connect(bd)
@@ -59,7 +59,6 @@ class bd_connector():
 # Clase para testear una subparte del modelo realizado. La subparte a
 # testear corresponde a lo referido en una sola facultad. Es por eso
 # que el set de funciones son pocas
-
 class model_test():
 
     # Permite usar un conector distinto (ej.: a una base en memoria) desde los tests
@@ -136,6 +135,12 @@ class model_test():
     def crear_rector(self, dni, periodo):
         self.execute_query('INSERT INTO rector (dni, periodo) VALUES (?, ?)', (dni, periodo))        
 
+    def registrar_voto_de_consejero_directivo_a_rector(self, dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo):
+        self.execute_query('''INSERT INTO rector_fue_votado_por_consejero_directivo
+                              (dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo)
+                              VALUES (?, ?, ?, ?)''',
+                           (dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo))
+
     ###############################################################################
     # Funciones requeridas por la cátedra aún no implementadas                    #
     ###############################################################################
@@ -175,8 +180,8 @@ class model_test():
     def obtener_claustro(self, dni):
         with self.connector as c:
             c.execute('SELECT tipo FROM empadronado WHERE dni = ?', (dni,))
-            row = c.fetchone()            
-            assert(row is not None)
+            row = c.fetchone()
+            assert row is not None, 'El DNI %d no está empadronado.' % dni
             return row[0]
 
     def obtener_tabla_consejero_directivo_dado_un_claustro(self, claustro):
@@ -196,4 +201,3 @@ class model_test():
         if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES:
             return 'consejero_superior_claustro_profesores'
         raise Error('Claustro inválido')
-

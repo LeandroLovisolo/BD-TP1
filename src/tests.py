@@ -372,6 +372,45 @@ class TestModel(unittest.TestCase):
         self.assertSelectIsNotEmpty('SELECT * FROM rector WHERE dni = ? AND periodo = ?',
                                     (dni_profesor, periodo))
 
+    def test_registrar_voto_de_consejero_directivo_a_rector(self):
+        dni_rector = 123
+        periodo_rector = 2014
+        nombre_rector = 'Rector'
+        dni_consejero_directivo = 456
+        periodo_consejero_directivo = 2014
+        nombre_consejero_directivo = 'Consejero Directivo'
+        nombre_agrupacion_politica = u'Agrupación'
+
+        self.model.empadronar_profesor(dni_rector, nombre_rector)
+        self.model.empadronar_alumno(dni_consejero_directivo, nombre_consejero_directivo)
+        self.model.crear_rector(dni_rector, periodo_rector)
+        id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre_agrupacion_politica)
+        self.model.crear_consejero_directivo(dni_consejero_directivo, periodo_consejero_directivo, id_agrupacion_politica)
+
+        # Asegurar que sea imposible registrar un voto de un consejero inexistente a un rector inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_de_consejero_directivo_a_rector(0, 0, 0, '')
+
+        # Asegurar que sea imposible registrar un voto de un consejero inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_de_consejero_directivo_a_rector(dni_rector, periodo_rector, 0, 0)
+
+        # Asegurar que sea imposible registrar un voto de a un rector inexistente
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_de_consejero_directivo_a_rector(0, 0, dni_consejero_directivo, periodo_consejero_directivo)
+
+        self.model.registrar_voto_de_consejero_directivo_a_rector(dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Asegurar que no se pueda registrar el mismo voto más de una vez
+        with self.assertRaises(IntegrityError):
+            self.model.registrar_voto_de_consejero_directivo_a_rector(dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo)
+
+        # Verificar que se haya creado la entrada en la tabla voto_a_rector
+        self.assertSelectIsNotEmpty('''SELECT * FROM rector_fue_votado_por_consejero_directivo WHERE
+                                       dni_rector = ? AND periodo_rector = ? AND
+                                       dni_consejero_directivo = ? AND periodo_consejero_directivo = ?''',
+                                    (dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo))
+
     ################################################################################
     # Aserciones auxiliares                                                        #
     ################################################################################
