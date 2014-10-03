@@ -10,15 +10,20 @@ import sqlite3
 # se da un ejemplo incompleto con el motor SQLite, pueden  adaptarlo
 # a cualquiera de los motores permitidos
 
-NACIMIENTO_DEFAULT = '01/01/2000'
-TODAY = time.strftime("%d/%m/%Y")
-
-ID_FACULTAD_DEFAULT = 1
-
 # Valores de la columna 'tipo' de la tabla 'empadronado'
 TIPO_ESTUDIANTE = 0
 TIPO_GRADUADO   = 1
 TIPO_PROFESOR   = 2
+
+# Valores de la columna 'tipo' de la tabla 'graduado'
+TIPO_GRADUADO_UBA              = 0
+TIPO_GRADUADO_OTRA_UNIVERSIDAD = 1
+
+# Valores de la columna 'tipo' de la tabla 'profesor'
+TIPO_PROFESOR_REGULAR = 0
+TIPO_PROFESOR_ADJUNTO = 1
+
+NOMBRE_FACULTAD_POR_DEFECTO = 'Facultad de Ciencias Exactas y Naturales'
 
 class bd_connector():
     # Funcion que crea la conexion con su BD
@@ -26,9 +31,9 @@ class bd_connector():
         self.conn = sqlite3.connect(bd)
     
     # Funcion que ejecuta queries sin esperar resultado y las comitea
-    def query_without_result(self, aQuery):
+    def query_without_result(self, query, parameters=()):
         c = self.conn.cursor()
-        c.execute(aQuery)
+        c.execute(query, parameters)
         self.conn.commit()
 
     def __enter__(self):
@@ -56,41 +61,28 @@ class model_test():
         else:
             self.connector = connector
 
-    def execute_query(self, query):
+    def execute_query(self, query, parameters=()):
         print query
-        self.connector.query_without_result(query)
+        self.connector.query_without_result(query, parameters)
 
-    def crear_empadronado(self, dni, nombre, tipo):
-        query_empadronado = "INSERT INTO empadronado (dni, nombre, fecha_de_nacimiento, id_facultad, tipo) VALUES (\"%s\", \"%s\", \"%s\", %s, %s)"%(dni, nombre, NACIMIENTO_DEFAULT, ID_FACULTAD_DEFAULT, str(tipo))
-        self.execute_query(query_empadronado)
-
-    #Tipos de empadronado: 0 = estudiante, 1 = graduado, 2 = profesor
-    # Funciones para empadronar personas
     def empadronar_alumno(self, dni, nombre): 
-        tipo = 0
-        self.crear_empadronado(dni, nombre, tipo)
-        query_alumno = "INSERT INTO estudiante (dni, fecha_inscripcion) VALUES (\"%s\", \"%s\")" % (dni, TODAY)
-        self.execute_query(query_alumno)
+        self.insertar_empadronado(dni, nombre, TIPO_ESTUDIANTE)
+        self.execute_query('''INSERT INTO estudiante (dni, fecha_inscripcion)
+                              VALUES (?, strftime('%s', 'now'))''', (dni,))
 
-    #tipo de graduado 0 = UBA, 1 = otras
     def empadronar_graduado(self, dni, nombre):
-        tipo = 1
-        self.crear_empadronado(dni, nombre, tipo)
-        query_graduado = "INSERT INTO graduado (dni, tipo) VALUES (\"%s\", %s)" % (dni, TIPO_GRADUADO)
-        self.execute_query(query_graduado)
+        self.insertar_empadronado(dni, nombre, TIPO_GRADUADO)
+        self.execute_query('''INSERT INTO graduado (dni, tipo)
+                              VALUES (?, ?)''', (dni, TIPO_GRADUADO_UBA))
+        self.execute_query('''INSERT INTO graduado_uba (dni)
+                              VALUES (?)''', (dni,))
 
-        query_graduado_UBA = "INSERT INTO graduado_uba (dni) VALUES (\"%s\")" % (dni)
-        self.execute_query(query_graduado_UBA)
-
-    #tipo de profesor 0 = regular, 1 = adjunto
     def empadronar_profesor(self, dni,nombre):  
-        tipo = 2
-        self.crear_empadronado(dni, nombre, tipo)
-        query_graduado = "INSERT INTO profesor (dni, tipo) VALUES (\"%s\", %s)" % (dni, TIPO_GRADUADO)
-        self.execute_query(query_graduado)
-
-        query_graduado_regular = "INSERT INTO profesor_regular (dni) VALUES (\"%s\")" % (dni)
-        self.execute_query(query_graduado_regular)
+        self.insertar_empadronado(dni, nombre, TIPO_PROFESOR)
+        self.execute_query('''INSERT INTO profesor (dni, nacionalidadUniversidad, tipo)
+                              VALUES (?, 'Argentina', ?)''', (dni, TIPO_PROFESOR_REGULAR))
+        self.execute_query('''INSERT INTO profesor_regular (dni)
+                              VALUES (?)''', (dni,))
     
     # Funcion que afilia a una persona (dni_afiliante) a una agrupacion (id_agrupacion)
     def afiliar_a_agrupacion(self, dni_afiliante, id_agrupacion): pass
@@ -103,3 +95,24 @@ class model_test():
     
     # Funcion que emite un voto de un consejero (dni_votador) para un candidato (dni_candidato) de decano en la fecha=fecha
     def set_voto_para_decano(self,dni_consejero_votador, dni_candidato,cantidad_de_votos,fecha): pass
+
+
+    ###############################################################################
+    # Funciones privadas (no deben ser consumidas por fuera de la API)            #
+    ###############################################################################
+
+    def obtener_id_facultad_por_defecto(self):
+        with self.connector as c:
+            c.execute('SELECT id FROM facultad WHERE nombre = ?', (NOMBRE_FACULTAD_POR_DEFECTO,))
+            row = c.fetchone()
+            if row is None:
+                c.execute('INSERT INTO facultad (nombre) VALUES (?)', (NOMBRE_FACULTAD_POR_DEFECTO,))
+                id = c.lastrowid
+            else:
+                id = row[0]
+        return id
+
+    def insertar_empadronado(self, dni, nombre, tipo):
+        id_facultad = self.obtener_id_facultad_por_defecto()
+        self.execute_query('''INSERT INTO empadronado (dni, nombre, id_facultad, tipo)
+                              VALUES (?, ?, ?, ?)''', (dni, nombre, id_facultad, tipo))

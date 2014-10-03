@@ -14,18 +14,27 @@ class TestModel(unittest.TestCase):
         # El modelo ahora usa la base en memoria en lugar del archivo facultad.db
         self.model = api.model_test(self.connector)
 
+    def test_crear_facultad_por_defecto(self):
+        self.model.empadronar_alumno(123, 'Alumno')
+        with self.connector as c:
+            c.execute('SELECT id, nombre FROM facultad')
+            row = c.fetchone()
+            self.assertIsNotNone(row)
+            self.assertEquals(row[0], 1)
+            self.assertEquals(row[1], api.NOMBRE_FACULTAD_POR_DEFECTO)
+
     def test_empadronar_alumno(self):
-        dni = 1234
+        dni = 123
         nombre = 'Alumno'
 
         self.model.empadronar_alumno(dni, nombre)
         with self.connector as c:
             # Verificar que se haya creado la entrada en la tabla empadronado
-            c.execute('SELECT dni, nombre, tipo FROM empadronado WHERE dni = ?', (dni,))
+            c.execute('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,))
             row = c.fetchone()
             self.assertIsNotNone(row)
-            self.assertEquals(row[1], nombre)
-            self.assertEquals(row[2], api.TIPO_ESTUDIANTE)
+            self.assertEquals(row[0], nombre)
+            self.assertEquals(row[1], api.TIPO_ESTUDIANTE)
 
             # Verificar que se haya creado la entrada en la tabla estudiante
             c.execute('SELECT dni FROM estudiante WHERE dni = ?', (dni,))
