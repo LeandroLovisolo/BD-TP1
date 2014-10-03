@@ -65,16 +65,22 @@
 \renewcommand{\appendixpagename}{Apéndices}
 %%%%%%%%%% Miscelánea - Fin %%%%%%%%%%
 
-% Macro para subrayar PK y 
+% Macro para subrayar PK y FK
 \newcommand{\pkfk}[1]{
     \tikz[baseline=(todotted.base)]{
-        \node[inner sep=1pt,outer sep=0pt] (todotted) {#1};
-        \draw[dotted, thick] (todotted.south west) -- (todotted.south east);
-        \node[inner sep=2pt,outer sep=0pt] (todotted) {#1};
+        \node[inner sep=0pt,outer sep=1.5pt] (todotted) {#1};
+        \draw (todotted.south west) -- (todotted.south east);
+        \node[inner sep=0pt,outer sep=3pt] (todotted) {#1};
         \draw (todotted.south west) -- (todotted.south east);
     }
 }
 
+\newcommand{\fk}[1]{
+    \tikz[baseline=(todotted.base)]{
+        \node[inner sep=1.5pt,outer sep=0pt] (todotted) {#1};
+        \draw [dashed] (todotted.south west) -- (todotted.south east);
+    }
+}
 
 \begin{document}
 
@@ -149,40 +155,40 @@ Rebecchi, Alejandro & Completar & alejandrorebecchi@gmail.com\\
 
 \textbf{Graduado}\{\pkfk{id}\}
 
-\textbf{Graduado de la UBA}\{\dotuline{\underline{id}}\}
+\textbf{Graduado de la UBA}\{\pkfk{id}\}
 
-\textbf{Graduado de otra universidad}\{\dotuline{\underline{id}}, inicioActividades\}
+\textbf{Graduado de otra universidad}\{\pkfk{id}, inicioActividades\}
 
-\textbf{Profesor}\{\dotuline{\underline{id}}, nacionalidadUniversidad\}
+\textbf{Profesor}\{\pkfk{id}, nacionalidadUniversidad\}
 
-\textbf{Profesor regular}\{\dotuline{\underline{id}}, nacionalidadUniversidad (underlined de fk)\}
+\textbf{Profesor regular}\{\pkfk{id}, \fk{nacionalidadUniversidad}\}
 
-\textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, nombre, \dotuline{idAgrupación}\}
+\textbf{Consejero Directivo}\{\pkfk{DNI},\underline{períodoConsejeroDirectivo}, nombre, \fk{idAgrupación}\}
 
-\textbf{Consejero Directivo por el Claustro de Profesores}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroDirectivo}}, \dotuline{idAgrupación}\}
+\textbf{Consejero Directivo por el Claustro de Profesores}\{\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
-\textbf{Consejero Directivo por el Claustro de Graduados}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroDirectivo}}, \dotuline{idAgrupación}\}
+\textbf{Consejero Directivo por el Claustro de Graduados}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
-\textbf{Consejero Directivo por el Claustro de Estudiantes}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroDirectivo}}, \dotuline{idAgrupación}\}
+\textbf{Consejero Directivo por el Claustro de Estudiantes}\{\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}\}
 
-\textbf{Agrupación política}\{\dotuline{idAgrupación}, nombre\}
+\textbf{Agrupación política}\{\fk{idAgrupación}, nombre\}
 
-\textbf{sePresentaDurante}\{\dotuline{\underline{idAgrupación}},\dotuline{\underline{fecha}}\}
+\textbf{sePresentaDurante}\{\pkfk{idAgrupación},\pkfk{fecha}\}
 
 \textbf{Calendario Electoral}\{\underline{fecha}\}
 
-\textbf{Decano}\{\dotuline{\underline{DNI}}, \underline{períodoDecano}\}
+\textbf{Decano}\{\pkfk{DNI}, \underline{períodoDecano}\}
 
-\textbf{Consejero Superior}\{\dotuline{\underline{DNI}}, \underline{períodoConsejeroSuperior}\}
+\textbf{Consejero Superior}\{\pkfk{DNI}, \underline{períodoConsejeroSuperior}\}
 
-\textbf{Consejero Superior por el Claustro de Profesores}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroSuperior}}\}
+\textbf{Consejero Superior por el Claustro de Profesores}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
 
-\textbf{Consejero Superior por el Claustro de Graduados}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroSuperior}}\}
+\textbf{Consejero Superior por el Claustro de Graduados}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
 
-\textbf{Consejero Superior por el Claustro de Estudiantes}\{\dotuline{\underline{DNI}},\dotuline{\underline{períodoConsejeroSuperior}}\}
+\textbf{Consejero Superior por el Claustro de Estudiantes}\{\pkfk{DNI},\pkfk{períodoConsejeroSuperior}\}
 
-\textbf{Rector}\{\dotuline{\underline{DNI}}, \underline{períodoRector}\}
+\textbf{Rector}\{\pkfk{DNI}, \underline{períodoRector}\}
 
-\textbf{fueVotadoPorConsejerosDirectivos}\{\underline{\underline{DNI}}, \underline{\underline{períodoRector}}, \underline{\underline{períodoConsejeroDirectivo}}, \underline{\underline{DNI de votante?}}\}
+\textbf{fueVotadoPorConsejerosDirectivos}\{\pkfk{DNI}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNI de votante?}\}
 
 \end{document}
