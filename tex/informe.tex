@@ -175,103 +175,163 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 
 \section{Modelo Relacional}
 
-\textbf{Facultad}(\underline{idFacultad}, nombre) \\
+
+\textbf{Facultad}(\underline{idFacultad}, nombre)
+
 PK = CK = \{idFacultad\}
 
-\textbf{Empadronado}(\underline{DNI}, nombre, fechaDeNacimiento, tipo) \\
+
+\textbf{Empadronado}(\underline{DNI}, nombre, fechaDeNacimiento, tipo)
+
 PK = CK = \{DNI\}
 
-\textbf{Estudiante}(\pkfk{DNI}, fechaDeInscripcion) \\
+
+\textbf{Estudiante}(\pkfk{DNI}, fechaDeInscripcion)
+
 PK = CK = FK = \{DNI\}
 
-\textbf{Graduado}(\pkfk{DNI}, tipo) \\
+
+\textbf{Graduado}(\pkfk{DNI}, tipo)
+
 PK = CK = FK = \{DNI\}
 
-\textbf{Graduado de la UBA}(\pkfk{DNI}) \\
+
+\textbf{Graduado de la UBA}(\pkfk{DNI})
+
 PK = CK = FK = \{DNI\}
 
-\textbf{Graduado de otra universidad}(\pkfk{DNI}, inicioActividades) \\
+
+\textbf{Graduado de otra universidad}(\pkfk{DNI}, inicioActividades)
+
 PK = CK = FK = \{DNI\}
 
-\textbf{Profesor}(\pkfk{DNI}, nacionalidadUniversidad, tipo) \\
+
+\textbf{Profesor}(\pkfk{DNI}, nacionalidadUniversidad, tipo)
+
 PK = CK = FK = \{DNI\}
 
-\textbf{Profesor regular}(\pkfk{DNI}, \fk{nacionalidadUniversidad}) \\
+
+\textbf{Profesor regular}(\pkfk{DNI}, \fk{nacionalidadUniversidad})
+
 PK = CK = \{DNI\}
-FK = \{nacionalidadUniversidad\}
 
-\textbf{Consejero Directivo}(\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo) \\
+FK = \{DNI, nacionalidadUniversidad\}
+
+
+\textbf{Consejero Directivo}(\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
+
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
+
 FK = \{DNI, idAgrupación\}
 
-\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}) \\
+
+\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
+
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
-\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}) \\
+
+\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
+
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
+
 	
-\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación}) \\
+\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo}, \fk{idAgrupación})
+
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
+
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
-\textbf{Agrupación política}(\underline{idAgrupación}, nombre) \\
+
+\textbf{Agrupación política}(\underline{idAgrupación}, nombre)
+
 PK = CK = \{idAgrupación\}
 
-\textbf{sePresentaDurante}(\pkfk{idAgrupación},\pkfk{fecha}) \\
+
+\textbf{sePresentaDurante}(\pkfk{idAgrupación},\pkfk{fecha})
+
 PK = CK = \{(idAgrupación, fecha)\}
+
 FK = \{idAgrupación, fecha\}
+
 
 \textbf{Calendario Electoral}(\underline{fecha})
 
 PK = CK = \{fecha\}
 
+
 \textbf{Decano}(\pkfk{DNI}, \underline{períodoDecano})
 
-PK = CK  = \{DNI, períodoDecano\}
+PK = CK  = \{(DNI, períodoDecano)\}
+
 FK = \{DNI\}
+
 
 \textbf{VotoADecano}(\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo}, \pkfk{períodoConsejeroDirectivo})
 
-PK = CK = FK = \{DNIDecano, períodoDecano, DNIConsejeroDirectitvo, períodoConsejeroDirectivo\}
+PK = CK = \{(DNIDecano, períodoDecano, DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
+
+FK = \{(DNIDecano, períodoDecano), (DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
+
 
 \textbf{Consejero Superior}(\pkfk{DNI}, \underline{períodoConsejeroSuperior}, tipo)
 
-PK = CK = \{DNI, períodoConsejeroSuperior\}
+PK = CK = \{(DNI, períodoConsejeroSuperior)\}
+
 FK = \{DNI\}
+
 
 \textbf{VotoAConsejeroSuperior}(\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo})
 
-PK = CK = FK = \{DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo, períodoConsejeroDirectivo\}
+PK = CK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
+
+FK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
+
 
 \textbf{Consejero Superior por el Claustro de Profesores}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-PK = CK = FK = \{DNI, períodoConsejeroSuperior\}
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
 
 \textbf{Consejero Superior por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-PK = CK = FK = \{DNI, períodoConsejeroSuperior\}
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
 
 \textbf{Consejero Superior por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
 
-PK = CK = FK = \{DNI, períodoConsejeroSuperior\}
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
 
 \textbf{Rector}(\pkfk{DNI}, \underline{períodoRector})
 
-PK = CK = \{DNI, períodoRector\}
-FK = \{períodoRector\}
+PK = CK = \{(DNI, períodoRector)\}
+
+FK = \{DNI\}
+
 
 \textbf{fueVotadoPorConsejerosDirectivos}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNIConsejeroDirectivo})
 
-PK = FK = CK \{DNIRector, períodoRector, períodoConsejeroDirectivo, DNIConsejeroDirectivo\}
+PK = CK = \{(DNIRector, períodoRector, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
-\textbf{fueVotadoPorDecanos}(\pkfk{DNIRector}, \pkfk{períodoDecano}, \pkfk{períodoDecano}, \pkfk{DNIDecano})
+FK = \{(DNIRector, períodoRector), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
-PK = FK = CK \{DNIRector, períodoRector, períodoDecano, DNIDecano\}
 
-\textbf{fueVotadoPorConsejerosSuperiores}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroSuperior})
+\textbf{fueVotadoPorDecanos}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{DNIDecano}, \pkfk{períodoDecano})
 
-PK = FK = CK \{DNIRector, períodoRector, períodoConsejeroSuperior, DNIConsejeroSuperior\}
+PK = CK = \{(DNIRector, períodoRector, DNIDecano, períodoDecano)\}
+
+FK = \{(DNIRector, períodoRector), (DNIDecano, períodoDecano)\}
+
+
+\textbf{fueVotadoPorConsejerosSuperiores}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior})
+
+PK = CK = \{(DNIRector, períodoRector, DNIConsejeroSuperior, períodoConsejeroSuperior)\}
+
+FK = \{(DNIRector, períodoRector), (DNIConsejeroSuperior, períodoConsejeroSuperior)\}
+
 
 \end{document}
