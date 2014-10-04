@@ -65,22 +65,18 @@
 \renewcommand{\appendixpagename}{Apéndices}
 %%%%%%%%%% Miscelánea - Fin %%%%%%%%%%
 
-% Macro para subrayar PK y FK
-\newcommand{\pkfk}[1]{
-    \tikz[baseline=(todotted.base)]{
-        \node[inner sep=0pt,outer sep=1.5pt] (todotted) {#1};
-        \draw (todotted.south west) -- (todotted.south east);
-        \node[inner sep=0pt,outer sep=3pt] (todotted) {#1};
-        \draw (todotted.south west) -- (todotted.south east);
-    }
-}
 
-\newcommand{\fk}[1]{
-    \tikz[baseline=(todotted.base)]{
-        \node[inner sep=1.5pt,outer sep=0pt] (todotted) {#1};
-        \draw [dashed] (todotted.south west) -- (todotted.south east);
-    }
+%%%%%%%%%% Macros para el modelo relacional - Inicio %%%%%%%%%%
+\newcommand{\pk}[1]{%
+  \underline{#1}%
 }
+\newcommand{\fk}[1]{%
+  \uwave{#1}%
+}
+\newcommand{\pkfk}[1]{%
+  \pk{\fk{#1}}%
+}
+%%%%%%%%%% Macros para el modelo relacional - Fin %%%%%%%%%%
 
 \begin{document}
 
@@ -142,37 +138,36 @@ Rebecchi, Alejandro & 15/10 & alejandrorebecchi@gmail.com\\
 %% Introducción                                                              %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \section{Introducción}
-Presentaremos una solución para el problema de verificación y conservación de los resultados de las elecciones
-de los diferentes cargos políticos que presenta una universidad, tomando como guía, el estatuto de la Universidad
-de Buenos Aires \footnote{www.uba.ar/download/institucional/uba/9-32.pdf}.
 
-El problema en cuestión contempla una serie de restricciones sobre como se realizan las votaciones y sobre quienes
-pueden presentarse para cada cargo que formarán parte de la verificación a modelar. Una vez resueltas las restricciones,
-se podrá validar los datos que se introduzcan, obteniendo registro de tanto los diferentes actores en las elecciones, como
-los cargos que tendrán los ganadores y para estos, los votos que recibieron, guardando quienes los realizaron solo para la elección
-que corresponda.
+Presentaremos una solución para el problema de verificación y conservación de los resultados de las elecciones de los diferentes cargos políticos que presenta una universidad, tomando como guía, el estatuto de la Universidad de Buenos Aires \footnote{www.uba.ar/download/institucional/uba/9-32.pdf}.
 
-Utilizaremos las herramientas vistas en la materia, el modelado basado en el Diagrama de Entidad Relación, su
-MR resultante y la base de datos final que presentaremos en SQLite.
+El problema en cuestión contempla una serie de restricciones sobre como se realizan las votaciones y sobre quienes pueden presentarse para cada cargo que formarán parte de la verificación a modelar. Una vez resueltas las restricciones, se podrá validar los datos que se introduzcan, obteniendo registro de tanto los diferentes actores en las elecciones, como los cargos que tendrán los ganadores y para estos, los votos que recibieron, guardando quienes los realizaron solo para la elección que corresponda.
+
+Utilizaremos las herramientas vistas en la materia, el modelado basado en el Diagrama de Entidad Relación, su MR resultante y la base de datos final que presentaremos en SQLite.
 
 
 \newpage
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% DER                                                                       %%
+%% Diagrama de Entidad Relación                                              %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \section{Diagrama de Entidad Relación}
 
+<<<<<<< HEAD
 \includegraphics{../diagramas/eleccionesCD.pdf}
 
+=======
+>>>>>>> 50033521c2f231c8cae684e03831c8cb67e5a27b
 
 \subsection{Restricciones}
 
-\textbf{Consejero Directivo:}
+
+\subsubsection{Consejero Directivo}
 
 \begin{itemize}
 \item Para un periodo existen ocho representantes por los profesores, cuatro representantes por los graduados y cuatro representantes por los estudiantes.
@@ -185,7 +180,8 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 \item Solo votan consejeros directivos empadronados de la misma facultad
 \end{itemize}
 
-\textbf{Decano:}
+
+\subsubsection{Decano}
 
 \begin{itemize}
 \item Solo votan al decano consejeros directivos de la misma facultad
@@ -194,7 +190,8 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 \item Los decanos deben haber tenido mayor o igual a 9 votos y menor o igual a 16
 \end{itemize}
 
-\textbf{Consejero Superior:}
+
+\subsubsection{Consejero Superior}
 
 \begin{itemize}
 \item Solo votan a consejeros superiores por el claustro de graduados, consejeros directivos por el claustro de graduados
@@ -207,7 +204,8 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 \item Existen por período, cinco representantes por el claustro de profesores, cinco por el de graduados y cinco por el de estudiantes
 \end{itemize}
 
-\textbf{Rector:}
+
+\subsubsection{Rector}
 
 \begin{itemize}
 \item Existen un solo rector por período
@@ -216,25 +214,26 @@ MR resultante y la base de datos final que presentaremos en SQLite.
 \item Ser ciudadano argentino, tener edad mayor o igual que 30 y ser profesor
 \end{itemize}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% MR                                                                        %%
+%% Modelo Relacional                                                         %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \section{Modelo Relacional}
 
 
-\textbf{Facultad}(\underline{idFacultad}, nombre)
+\textbf{Facultad}(\pk{idFacultad}, nombre)
 
 PK = CK = \{idFacultad\}
 
 
-\textbf{Empadronado}(\underline{DNI}, nombre, fechaDeNacimiento, tipo)
+\textbf{Empadronado}(\pk{DNI}, nombre, fechaDeNacimiento, \fk{idFacultad}, tipo)
 
 PK = CK = \{DNI\}
 
 
-\textbf{Estudiante}(\pkfk{DNI}, fechaDeInscripcion)
+\textbf{Estudiante}(\pkfk{DNI} fechaDeInscripcion)
 
 PK = CK = FK = \{DNI\}
 
@@ -269,116 +268,116 @@ PK = CK = FK \{DNI\}
 PK = CK = FK \{DNI\}
 
 
-\textbf{Consejero Directivo}(\pkfk{DNI},\underline{períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
+\textbf{Consejero Directivo}(\pk{\fk{DNI}, períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
 FK = \{DNI, idAgrupación\}
 
 
-\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI}, \pkfk{períodoConsejeroDirectivo})
+\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI, períodoConsejeroDirectivo})
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
 
-\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo})
-
-PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
-
-FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
-
-	
-\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroDirectivo})
+\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI, períodoConsejeroDirectivo})
 
 PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
 
 FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
 
 
-\textbf{Agrupación política}(\underline{idAgrupación}, nombre)
+\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI, períodoConsejeroDirectivo})
+
+PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
+
+FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
+
+
+\textbf{Agrupación política}(\pk{idAgrupación}, nombre)
 
 PK = CK = \{idAgrupación\}
 
 
-\textbf{sePresentaDurante}(\pkfk{idAgrupación},\pkfk{fecha})
+\textbf{sePresentaDurante}(\pk{\fk{idAgrupación}, \fk{fecha}}, votosRecibidos)
 
 PK = CK = \{(idAgrupación, fecha)\}
 
 FK = \{idAgrupación, fecha\}
 
 
-\textbf{Calendario Electoral}(\underline{fecha})
+\textbf{Calendario Electoral}(\pk{fecha})
 
 PK = CK = \{fecha\}
 
 
-\textbf{Decano}(\pkfk{DNI}, \underline{períodoDecano})
+\textbf{Decano}(\pk{\fk{DNI}, \fk{períodoDecano}})
 
 PK = CK  = \{(DNI, períodoDecano)\}
 
 FK = \{DNI\}
 
 
-\textbf{VotoADecano}(\pkfk{DNIDecano}, \pkfk{períodoDecano}, \pkfk{DNIConsejeroDirectivo}, \pkfk{períodoConsejeroDirectivo})
+\textbf{VotoADecano}(\pk{\fk{DNIDecano, períodoDecano}, \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}})
 
 PK = CK = \{(DNIDecano, períodoDecano, DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
 
 FK = \{(DNIDecano, períodoDecano), (DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
 
 
-\textbf{Consejero Superior}(\pkfk{DNI}, \underline{períodoConsejeroSuperior}, tipo)
+\textbf{Consejero Superior}(\pk{\fk{DNI}, \fk{períodoConsejeroSuperior}}, tipo)
 
 PK = CK = \{(DNI, períodoConsejeroSuperior)\}
 
 FK = \{DNI\}
 
 
-\textbf{VotoAConsejeroSuperior}(\pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior}, \pkfk{DNIConsejeroDirectivo} \pkfk{períodoConsejeroDirectivo})
+\textbf{Consejero Superior por el Claustro de Estudiantes}(\pkfk{DNI, períodoConsejeroSuperior})
+
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
+
+\textbf{Consejero Superior por el Claustro de Profesores}(\pkfk{DNI, períodoConsejeroSuperior})
+
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
+
+\textbf{Consejero Superior por el Claustro de Graduados}(\pkfk{DNI, períodoConsejeroSuperior})
+
+PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
+
+
+\textbf{VotoAConsejeroSuperior}(\pk{\fk{DNIConsejeroSuperior, períodoConsejeroSuperior}, \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}})
 
 PK = CK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
 FK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
 
-\textbf{Consejero Superior por el Claustro de Profesores}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{Consejero Superior por el Claustro de Graduados}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{Consejero Superior por el Claustro de Estudiantes}(\pkfk{DNI},\pkfk{períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{Rector}(\pkfk{DNI}, \underline{períodoRector})
+\textbf{Rector}(\pk{\fk{DNI}, \fk{períodoRector}})
 
 PK = CK = \{(DNI, períodoRector)\}
 
 FK = \{DNI\}
 
 
-\textbf{fueVotadoPorConsejerosDirectivos}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{períodoConsejeroDirectivo}, \pkfk{DNIConsejeroDirectivo})
+\textbf{fueVotadoPorConsejerosDirectivos}(\pk{\fk{DNIRector, períodoRector}, \fk{períodoConsejeroDirectivo, DNIConsejeroDirectivo}})
 
 PK = CK = \{(DNIRector, períodoRector, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
 FK = \{(DNIRector, períodoRector), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
 
 
-\textbf{fueVotadoPorDecanos}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{DNIDecano}, \pkfk{períodoDecano})
+\textbf{fueVotadoPorDecanos}(\pk{\fk{DNIRector, períodoRector}, \fk{DNIDecano, períodoDecano}})
 
 PK = CK = \{(DNIRector, períodoRector, DNIDecano, períodoDecano)\}
 
 FK = \{(DNIRector, períodoRector), (DNIDecano, períodoDecano)\}
 
 
-\textbf{fueVotadoPorConsejerosSuperiores}(\pkfk{DNIRector}, \pkfk{períodoRector}, \pkfk{DNIConsejeroSuperior}, \pkfk{períodoConsejeroSuperior})
+\textbf{fueVotadoPorConsejerosSuperiores}(\pk{\fk{DNIRector, períodoRector}, \fk{DNIConsejeroSuperior, períodoConsejeroSuperior}})
 
 PK = CK = \{(DNIRector, períodoRector, DNIConsejeroSuperior, períodoConsejeroSuperior)\}
 
