@@ -10,3 +10,6 @@
 # Sublime Text
 *.sublime-project
 *.sublime-workspace
+
+# Bundle
+*.tar.gz
