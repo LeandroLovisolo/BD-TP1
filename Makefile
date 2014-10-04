@@ -1,6 +1,7 @@
-BUNDLE       = BD-TP1.tar.gz
-BUNDLE_DIR   = BD-TP1
-BUNDLE_FILES = src tex Makefile README.md enunciado.pdf informe.pdf
+BUNDLE                      = BD-TP1.tar.gz
+BUNDLE_DIR                  = BD-TP1
+BUNDLE_FILES_CLEAN          = src tex db diagramas Makefile README.md enunciado.pdf 
+BUNDLE_FILES_AFTER_MAKE_ALL = informe.pdf
 
 .PHONY: all clean bundle
 
@@ -13,9 +14,11 @@ informe.pdf:
 db/facultad.db: db/facultad.sql
 	echo -e ".read db/facultad.sql\n.save db/facultad.db" | sqlite3 -batch
 
-bundle: clean all
+bundle: clean
 	mkdir $(BUNDLE_DIR)
-	cp $(BUNDLE_FILES) $(BUNDLE_DIR) -r
+	cp $(BUNDLE_FILES_CLEAN) $(BUNDLE_DIR) -r
+	make all
+	cp $(BUNDLE_FILES_AFTER_MAKE_ALL) $(BUNDLE_DIR) -r
 	tar zcf $(BUNDLE) $(BUNDLE_DIR)
 	rm -rf $(BUNDLE_DIR)
 
