@@ -19,8 +19,7 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{xspace}
-\usepackage{tikz} % Provee herramientas de dibujado para subrayado
-\usepackage{ulem} % Provee subrayados punteados \dotuline
+\usepackage{ulem} % Provee macro \uwave
 \usepackage[toc, page]{appendix}
 
 
@@ -67,6 +66,12 @@
 
 
 %%%%%%%%%% Macros para el modelo relacional - Inicio %%%%%%%%%%
+\newcommand{\relacion}[3]{
+  \noindent
+  \textbf{#1}(\ignorespaces#2\unskip) \\
+  #3
+  \vspace{0.5em}
+}
 \newcommand{\pk}[1]{%
   \underline{#1}%
 }
@@ -75,6 +80,15 @@
 }
 \newcommand{\pkfk}[1]{%
   \pk{\fk{#1}}%
+}
+\newcommand{\clavespkck}[1]{
+  PK = CK = \{#1\}
+}
+\newcommand{\clavespkckfk}[1]{
+  PK = CK = FK = \{#1\}
+}
+\newcommand{\clavesfk}[1]{
+  FK = \{#1\}
 }
 %%%%%%%%%% Macros para el modelo relacional - Fin %%%%%%%%%%
 
@@ -218,165 +232,197 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 \section{Modelo Relacional}
 
 
-\textbf{Facultad}(\pk{idFacultad}, nombre)
-
-PK = CK = \{idFacultad\}
-
-
-\textbf{Empadronado}(\pk{DNI}, nombre, fechaDeNacimiento, \fk{idFacultad}, tipo)
-
-PK = CK = \{DNI\}
-
-
-\textbf{Estudiante}(\pkfk{DNI} fechaDeInscripcion)
-
-PK = CK = FK = \{DNI\}
-
-
-\textbf{Graduado}(\pkfk{DNI}, tipo)
-
-PK = CK = FK = \{DNI\}
-
-
-\textbf{Graduado de la UBA}(\pkfk{DNI})
-
-PK = CK = FK = \{DNI\}
-
-
-\textbf{Graduado de otra universidad}(\pkfk{DNI}, inicioActividades)
-
-PK = CK = FK = \{DNI\}
-
-
-\textbf{Profesor}(\pkfk{DNI}, nacionalidadUniversidad, tipo)
-
-PK = CK = FK = \{DNI\}
-
-
-\textbf{Profesor regular}(\pkfk{DNI})
-
-PK = CK = FK \{DNI\}
-
-
-\textbf{Profesor adjunto}(\pkfk{DNI})
-
-PK = CK = FK \{DNI\}
-
-
-\textbf{Consejero Directivo}(\pk{\fk{DNI}, períodoConsejeroDirectivo}, \fk{idAgrupación}, tipo)
-
-PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
-
-FK = \{DNI, idAgrupación\}
-
-
-\textbf{Consejero Directivo por el Claustro de Estudiantes}(\pkfk{DNI, períodoConsejeroDirectivo})
-
-PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
-
-FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
-
-
-\textbf{Consejero Directivo por el Claustro de Graduados}(\pkfk{DNI, períodoConsejeroDirectivo})
-
-PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
-
-FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
-
-
-\textbf{Consejero Directivo por el Claustro de Profesores}(\pkfk{DNI, períodoConsejeroDirectivo})
-
-PK = CK = \{(DNI, períodoConsejeroDirectivo)\}
-
-FK = \{(DNI, períodoConsejeroDirectivo), idAgrupación\}
-
-
-\textbf{Agrupación política}(\pk{idAgrupación}, nombre)
-
-PK = CK = \{idAgrupación\}
-
-
-\textbf{sePresentaDurante}(\pk{\fk{idAgrupación}, \fk{fecha}}, votosRecibidos)
-
-PK = CK = \{(idAgrupación, fecha)\}
-
-FK = \{idAgrupación, fecha\}
-
-
-\textbf{Calendario Electoral}(\pk{fecha})
-
-PK = CK = \{fecha\}
-
-
-\textbf{Decano}(\pk{\fk{DNI}, \fk{períodoDecano}})
-
-PK = CK  = \{(DNI, períodoDecano)\}
-
-FK = \{DNI\}
-
-
-\textbf{VotoADecano}(\pk{\fk{DNIDecano, períodoDecano}, \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}})
-
-PK = CK = \{(DNIDecano, períodoDecano, DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
-
-FK = \{(DNIDecano, períodoDecano), (DNIConsejeroDirectitvo, períodoConsejeroDirectivo)\}
-
-
-\textbf{Consejero Superior}(\pk{\fk{DNI}, \fk{períodoConsejeroSuperior}}, tipo)
-
-PK = CK = \{(DNI, períodoConsejeroSuperior)\}
-
-FK = \{DNI\}
-
-
-\textbf{Consejero Superior por el Claustro de Estudiantes}(\pkfk{DNI, períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{Consejero Superior por el Claustro de Profesores}(\pkfk{DNI, períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{Consejero Superior por el Claustro de Graduados}(\pkfk{DNI, períodoConsejeroSuperior})
-
-PK = CK = FK = \{(DNI, períodoConsejeroSuperior)\}
-
-
-\textbf{VotoAConsejeroSuperior}(\pk{\fk{DNIConsejeroSuperior, períodoConsejeroSuperior}, \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}})
-
-PK = CK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
-
-FK = \{(DNIConsejeroSuperior, períodoConsejeroSuperior), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
-
-
-\textbf{Rector}(\pk{\fk{DNI}, \fk{períodoRector}})
-
-PK = CK = \{(DNI, períodoRector)\}
-
-FK = \{DNI\}
-
-
-\textbf{fueVotadoPorConsejerosDirectivos}(\pk{\fk{DNIRector, períodoRector}, \fk{períodoConsejeroDirectivo, DNIConsejeroDirectivo}})
-
-PK = CK = \{(DNIRector, períodoRector, DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
-
-FK = \{(DNIRector, períodoRector), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)\}
-
-
-\textbf{fueVotadoPorDecanos}(\pk{\fk{DNIRector, períodoRector}, \fk{DNIDecano, períodoDecano}})
-
-PK = CK = \{(DNIRector, períodoRector, DNIDecano, períodoDecano)\}
-
-FK = \{(DNIRector, períodoRector), (DNIDecano, períodoDecano)\}
-
-
-\textbf{fueVotadoPorConsejerosSuperiores}(\pk{\fk{DNIRector, períodoRector}, \fk{DNIConsejeroSuperior, períodoConsejeroSuperior}})
-
-PK = CK = \{(DNIRector, períodoRector, DNIConsejeroSuperior, períodoConsejeroSuperior)\}
-
-FK = \{(DNIRector, períodoRector), (DNIConsejeroSuperior, períodoConsejeroSuperior)\}
+\relacion{Facultad}{
+  \pk{idFacultad},
+  nombre
+}{
+  \clavespkck{idFacultad}
+}
+
+\relacion{Empadronado}{
+  \pk{DNI},
+  nombre,
+  fechaDeNacimiento,
+  \fk{idFacultad},
+  tipo
+}{
+  \clavespkck{DNI}
+}
+
+\relacion{Estudiante}{
+  \pkfk{DNI},
+  fechaDeInscripcion
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Graduado}{
+  \pkfk{DNI},
+  tipo
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Graduado de la UBA}{
+  \pkfk{DNI}
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Graduado de otra universidad}{
+  \pkfk{DNI},
+  inicioActividades
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Profesor}{
+  \pkfk{DNI},
+  nacionalidadUniversidad,
+  tipo
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Profesor regular}{
+  \pkfk{DNI}
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Profesor adjunto}{
+  \pkfk{DNI}
+}{
+  \clavespkckfk{DNI}
+}
+
+\relacion{Consejero Directivo}{
+  \pk{\fk{DNI}, períodoConsejeroDirectivo},
+  \fk{idAgrupación},
+  tipo
+}{
+  \clavespkck{(DNI, períodoConsejeroDirectivo)} \\
+  \clavesfk{DNI, idAgrupación}
+}
+
+\relacion{Consejero Directivo por el Claustro de Estudiantes}{
+  \pkfk{DNI, períodoConsejeroDirectivo}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
+}
+
+\relacion{Consejero Directivo por el Claustro de Graduados}{
+  \pkfk{DNI, períodoConsejeroDirectivo}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
+}
+
+\relacion{Consejero Directivo por el Claustro de Profesores}{
+  \pkfk{DNI, períodoConsejeroDirectivo}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
+}
+
+\relacion{Agrupación política}{
+  \pk{idAgrupación},
+  nombre
+}{
+  \clavespkck{idAgrupación}
+}
+
+\relacion{sePresentaDurante}{
+  \pk{\fk{idAgrupación}, \fk{fecha}},
+  votosRecibidos
+}{
+  \clavespkck{(idAgrupación, fecha)} \\
+  \clavesfk{idAgrupación, fecha}
+}
+
+\relacion{Calendario Electoral}{
+  \pk{fecha}
+}{
+  \clavespkck{fecha}
+}
+
+\relacion{Decano}{
+  \pk{\fk{DNI}, \fk{períodoDecano}}
+}{
+  \clavespkck{(DNI, períodoDecano)} \\
+  \clavesfk{DNI}
+}
+
+\relacion{VotoADecano}{
+  \pk{\fk{DNIDecano, períodoDecano},
+      \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}}
+}{
+  \clavespkck{(DNIDecano, períodoDecano, DNIConsejeroDirectitvo, períodoConsejeroDirectivo)} \\
+  \clavesfk{(DNIDecano, períodoDecano), (DNIConsejeroDirectitvo, períodoConsejeroDirectivo)}
+}
+
+\relacion{Consejero Superior}{
+  \pk{\fk{DNI}, \fk{períodoConsejeroSuperior}},
+  tipo
+}{
+  \clavespkck{(DNI, períodoConsejeroSuperior)} \\
+  \clavesfk{DNI}
+}
+
+\relacion{Consejero Superior por el Claustro de Estudiantes}{
+  \pkfk{DNI, períodoConsejeroSuperior}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
+}
+
+\relacion{Consejero Superior por el Claustro de Profesores}{
+  \pkfk{DNI, períodoConsejeroSuperior}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
+}
+
+\relacion{Consejero Superior por el Claustro de Graduados}{
+  \pkfk{DNI, períodoConsejeroSuperior}
+}{
+  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
+}
+
+\relacion{VotoAConsejeroSuperior}{
+  \pk{\fk{DNIConsejeroSuperior, períodoConsejeroSuperior},
+      \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}}
+}{
+  \clavespkck{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo períodoConsejeroDirectivo)} \\
+  \clavesfk{(DNIConsejeroSuperior, períodoConsejeroSuperior), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)}
+}
+
+\relacion{Rector}{
+  \pk{\fk{DNI}, \fk{períodoRector}}
+}{
+  \clavespkck{(DNI, períodoRector)} \\
+  \clavesfk{DNI}
+}
+
+\relacion{fueVotadoPorConsejerosDirectivos}{
+  \pk{\fk{DNIRector, períodoRector},
+      \fk{períodoConsejeroDirectivo, DNIConsejeroDirectivo}}
+}{
+  \clavespkck{(DNIRector, períodoRector, DNIConsejeroDirectivo, períodoConsejeroDirectivo)} \\
+  \clavesfk{(DNIRector, períodoRector), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)}
+}
+
+\relacion{fueVotadoPorDecanos}{
+  \pk{\fk{DNIRector, períodoRector},
+      \fk{DNIDecano, períodoDecano}}
+}{
+  \clavespkck{(DNIRector, períodoRector, DNIDecano, períodoDecano)} \\
+  \clavesfk{(DNIRector, períodoRector), (DNIDecano, períodoDecano)}
+}
+
+\relacion{fueVotadoPorConsejerosSuperiores}{
+  \pk{\fk{DNIRector, períodoRector},
+      \fk{DNIConsejeroSuperior, períodoConsejeroSuperior}}
+}{
+  \clavespkck{(DNIRector, períodoRector, DNIConsejeroSuperior, períodoConsejeroSuperior)} \\
+  \clavesfk{(DNIRector, períodoRector), (DNIConsejeroSuperior, períodoConsejeroSuperior)}
+}
 
 
 \end{document}
