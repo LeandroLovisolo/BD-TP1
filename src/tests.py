@@ -102,24 +102,26 @@ class TestModel(unittest.TestCase):
 
     def test_registrar_votos_eleccion_consejo_directivo(self):
         nombre = u'Agrupación'
-        fecha = 2014
+        periodo = 2014
         votos_recibidos = 10
 
         # Asegurar que se requiera un ID de agrupación política válido
         with self.assertRaises(IntegrityError):
-            self.model.registrar_votos_eleccion_consejo_directivo(0, fecha, votos_recibidos)
+            self.model.registrar_votos_eleccion_consejo_directivo(0, periodo, votos_recibidos)
 
         id_agrupacion_politica = self.model.crear_agrupacion_politica(nombre)
-        self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
+        self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, periodo, votos_recibidos)
 
         # Asegurar que no se puedan registrar los votos más de una vez
         with self.assertRaises(IntegrityError):
-            self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, fecha, votos_recibidos)
+            self.model.registrar_votos_eleccion_consejo_directivo(id_agrupacion_politica, periodo, votos_recibidos)
 
-        # Verificar que se hayan creado las entradas en las tablas correspondientes
-        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE fecha = ?', (fecha,))
+        # Verificar que exista el período en el calendario electoral
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE periodo = ?', (periodo,))
+
+        # Verificar que se haya creado la entrada en la tabla agrupacion_politica_se_presenta_durante_calendario_electoral
         self.assertSelectEquals('''SELECT votos_recibidos FROM agrupacion_politica_se_presenta_durante_calendario_electoral
-                                   WHERE id_agrupacion_politica = ? AND fecha = ?''', (id_agrupacion_politica, fecha),
+                                   WHERE id_agrupacion_politica = ? AND periodo = ?''', (id_agrupacion_politica, periodo),
                                 (votos_recibidos,))
 
     def test_crear_consejero_directivo_claustro_estudiantes(self):
@@ -163,6 +165,9 @@ class TestModel(unittest.TestCase):
 
         tabla_claustro = self.model.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
 
+        # Verificar que exista el período en el calendario electoral
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE periodo = ?', (periodo,))
+
         # Verificar que se haya creado la entrada en la tabla consejero_directivo
         self.assertSelectEquals('''SELECT id_agrupacion_politica, tipo FROM consejero_directivo
                                    WHERE dni = ? AND periodo = ?''', (dni, periodo),
@@ -205,6 +210,9 @@ class TestModel(unittest.TestCase):
         # Asegurar que no se pueda crear un mismo decano más de una vez
         with self.assertRaises(IntegrityError):
             self.model.crear_decano(dni_profesor, periodo)
+
+        # Verificar que exista el período en el calendario electoral
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE periodo = ?', (periodo,))
 
         # Verificar que se haya creado la entrada en la tabla decano
         self.assertSelectIsNotEmpty('SELECT * FROM decano WHERE dni = ? AND periodo = ?',
@@ -287,6 +295,9 @@ class TestModel(unittest.TestCase):
 
         tabla_claustro = self.model.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
 
+        # Verificar que exista el período en el calendario electoral
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE periodo = ?', (periodo,))
+
         # Verificar que se haya creado la entrada en la tabla consejero_superior
         self.assertSelectEquals('''SELECT tipo FROM consejero_superior
                                    WHERE dni = ? AND periodo = ?''', (dni, periodo), (claustro,))
@@ -367,6 +378,9 @@ class TestModel(unittest.TestCase):
         # Asegurar que no se pueda crear un mismo rector más de una vez
         with self.assertRaises(IntegrityError):
             self.model.crear_rector(dni_profesor, periodo)
+
+        # Verificar que exista el período en el calendario electoral
+        self.assertSelectIsNotEmpty('SELECT * FROM calendario_electoral WHERE periodo = ?', (periodo,))
 
         # Verificar que se haya creado la entrada en la tabla rector
         self.assertSelectIsNotEmpty('SELECT * FROM rector WHERE dni = ? AND periodo = ?',

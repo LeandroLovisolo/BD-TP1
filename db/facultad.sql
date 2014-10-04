@@ -53,10 +53,22 @@ CREATE TABLE `profesor_adjunto` (
     PRIMARY KEY(dni),
     FOREIGN KEY(dni) REFERENCES profesor(dni) ON DELETE CASCADE
 );
+CREATE TABLE `calendario_electoral` (
+    `periodo` INTEGER,
+    PRIMARY KEY(periodo)
+);
 CREATE TABLE `agrupacion_politica` (
     `id`     INTEGER,
     `nombre` TEXT,
     PRIMARY KEY(id)
+);
+CREATE TABLE `agrupacion_politica_se_presenta_durante_calendario_electoral` (
+    `id_agrupacion_politica` INTEGER,
+    `periodo`                  INTEGER,
+    `votos_recibidos`        INTEGER,
+    PRIMARY KEY(id_agrupacion_politica, periodo),
+    FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id),
+    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
 );
 CREATE TABLE `consejero_directivo` (
     `dni`                    INTEGER,
@@ -65,6 +77,7 @@ CREATE TABLE `consejero_directivo` (
     `tipo`                   INTEGER,
     PRIMARY KEY(dni, periodo),
     FOREIGN KEY(dni) REFERENCES empadronado(dni),
+    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo),
     FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id)
 );
 CREATE TABLE `consejero_directivo_claustro_estudiantes` (
@@ -85,23 +98,12 @@ CREATE TABLE `consejero_directivo_claustro_profesores` (
     PRIMARY KEY (dni, periodo),
     FOREIGN KEY (dni, periodo) REFERENCES consejero_directivo(dni, periodo) ON DELETE CASCADE
 );
-CREATE TABLE `calendario_electoral` (
-    `fecha` INTEGER,
-    PRIMARY KEY(fecha)
-);
-CREATE TABLE `agrupacion_politica_se_presenta_durante_calendario_electoral` (
-    `id_agrupacion_politica` INTEGER,
-    `fecha`                  INTEGER,
-    `votos_recibidos`        INTEGER,
-    PRIMARY KEY(id_agrupacion_politica, fecha),
-    FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id),
-    FOREIGN KEY(fecha) REFERENCES calendario_electoral(fecha)
-);
 CREATE TABLE `decano` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES profesor(dni)
+    FOREIGN KEY(dni) REFERENCES profesor(dni),
+    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
 );
 CREATE TABLE `voto_a_decano` (
     `dni_decano`                  INTEGER,
@@ -117,7 +119,8 @@ CREATE TABLE `consejero_superior` (
     `periodo`                INTEGER,
     `tipo`                   INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES empadronado(dni)
+    FOREIGN KEY(dni) REFERENCES empadronado(dni),
+    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
 );
 CREATE TABLE `consejero_superior_claustro_estudiantes` (
     `dni`                    INTEGER,
@@ -150,7 +153,8 @@ CREATE TABLE `rector` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES profesor(dni)
+    FOREIGN KEY(dni) REFERENCES profesor(dni),
+    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
 );
 CREATE TABLE `rector_fue_votado_por_consejero_directivo` (
     `dni_rector`                  INTEGER,
