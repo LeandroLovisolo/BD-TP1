@@ -77,7 +77,6 @@ CREATE TABLE `consejero_directivo` (
     `tipo`                   INTEGER,
     PRIMARY KEY(dni, periodo),
     FOREIGN KEY(dni) REFERENCES empadronado(dni),
-    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo),
     FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id)
 );
 CREATE TABLE `consejero_directivo_claustro_estudiantes` (
@@ -102,8 +101,7 @@ CREATE TABLE `decano` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES profesor(dni),
-    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
+    FOREIGN KEY(dni) REFERENCES profesor(dni)
 );
 CREATE TABLE `voto_a_decano` (
     `dni_decano`                  INTEGER,
@@ -119,8 +117,7 @@ CREATE TABLE `consejero_superior` (
     `periodo`                INTEGER,
     `tipo`                   INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES empadronado(dni),
-    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
+    FOREIGN KEY(dni) REFERENCES empadronado(dni)
 );
 CREATE TABLE `consejero_superior_claustro_estudiantes` (
     `dni`                    INTEGER,
@@ -153,8 +150,7 @@ CREATE TABLE `rector` (
     `dni`     INTEGER,
     `periodo` INTEGER,
     PRIMARY KEY(dni, periodo),
-    FOREIGN KEY(dni) REFERENCES profesor(dni),
-    FOREIGN KEY(periodo) REFERENCES calendario_electoral(periodo)
+    FOREIGN KEY(dni) REFERENCES profesor(dni)
 );
 CREATE TABLE `rector_fue_votado_por_consejero_directivo` (
     `dni_rector`                  INTEGER,

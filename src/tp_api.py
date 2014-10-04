@@ -106,7 +106,7 @@ class model_test():
             return c.lastrowid
 
     def registrar_votos_eleccion_consejo_directivo(self, id_agrupacion_politica, periodo, votos_recibidos):
-        self.registrar_periodo(periodo)
+        self.execute_query('INSERT OR IGNORE INTO calendario_electoral (periodo) VALUES (?)', (periodo,))
         self.execute_query('''INSERT INTO agrupacion_politica_se_presenta_durante_calendario_electoral
                               (id_agrupacion_politica, periodo, votos_recibidos)
                               VALUES (?, ?, ?)''', (id_agrupacion_politica, periodo, votos_recibidos))
@@ -114,7 +114,6 @@ class model_test():
     def crear_consejero_directivo(self, dni, periodo, id_agrupacion_politica):
         claustro = self.obtener_claustro(dni)
         tabla_claustro = self.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
-        self.registrar_periodo(periodo)
         self.execute_query('''INSERT INTO consejero_directivo (dni, periodo, id_agrupacion_politica, tipo)
                               VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
@@ -124,7 +123,6 @@ class model_test():
     ################################################################################
 
     def crear_decano(self, dni, periodo):
-        self.registrar_periodo(periodo)
         self.execute_query('INSERT INTO decano (dni, periodo) VALUES (?, ?)', (dni, periodo))
 
     def registrar_voto_a_decano(self, dni_decano, periodo_decano, dni_consejero_directivo, periodo_consejero_directivo):
@@ -140,7 +138,6 @@ class model_test():
     def crear_consejero_superior(self, dni, periodo):
         claustro = self.obtener_claustro(dni)
         tabla_claustro = self.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
-        self.registrar_periodo(periodo)
         self.execute_query('''INSERT INTO consejero_superior (dni, periodo, tipo)
                               VALUES (?, ?, ?)''', (dni, periodo, claustro))
         self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
@@ -156,7 +153,6 @@ class model_test():
     ################################################################################
 
     def crear_rector(self, dni, periodo):
-        self.registrar_periodo(periodo)
         self.execute_query('INSERT INTO rector (dni, periodo) VALUES (?, ?)', (dni, periodo))        
 
     def registrar_voto_de_consejero_directivo_a_rector(self, dni_rector, periodo_rector, dni_consejero_directivo, periodo_consejero_directivo):
@@ -212,9 +208,6 @@ class model_test():
         id_facultad = self.obtener_id_facultad_por_defecto()
         self.execute_query('''INSERT INTO empadronado (dni, nombre, id_facultad, tipo)
                               VALUES (?, ?, ?, ?)''', (dni, nombre, id_facultad, tipo))
-
-    def registrar_periodo(self, periodo):
-        self.execute_query('INSERT OR IGNORE INTO calendario_electoral (periodo) VALUES (?)', (periodo,))
 
     def obtener_claustro(self, dni):
         with self.connector as c:
