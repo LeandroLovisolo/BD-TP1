@@ -40,7 +40,7 @@ class TestModel(unittest.TestCase):
             self.model.empadronar_alumno(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
-        self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
+        self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
                                 (nombre, api.TIPO_ESTUDIANTE))
 
         # Verificar que se haya creado la entrada en la tabla estudiante
@@ -57,11 +57,11 @@ class TestModel(unittest.TestCase):
             self.model.empadronar_graduado(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
-        self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
+        self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
                                 (nombre, api.TIPO_GRADUADO))
 
         # Verificar que se haya creado la entrada en la tabla graduado
-        self.assertSelectEquals('SELECT tipo FROM graduado WHERE dni = ?', (dni,),
+        self.assertSelectEquals('SELECT claustro FROM graduado WHERE dni = ?', (dni,),
                                 (api.TIPO_GRADUADO_UBA,))
 
         # Verificar que se haya creado la entrada en la tabla graduado_uba
@@ -78,11 +78,11 @@ class TestModel(unittest.TestCase):
             self.model.empadronar_profesor(dni, nombre)
 
         # Verificar que se haya creado la entrada en la tabla empadronado
-        self.assertSelectEquals('SELECT nombre, tipo FROM empadronado WHERE dni = ?', (dni,),
+        self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
                                 (nombre, api.TIPO_PROFESOR))
 
         # Verificar que se haya creado la entrada en la tabla profesor
-        self.assertSelectEquals('SELECT nacionalidad_universidad, tipo FROM profesor WHERE dni = ?', (dni,),
+        self.assertSelectEquals('SELECT nacionalidad_universidad, claustro FROM profesor WHERE dni = ?', (dni,),
                                 (api.NACIONALIDAD_UNIVERSIDAD_PROFESOR, api.TIPO_PROFESOR_REGULAR))
 
         # Verificar que se haya creado la entrada en la tabla profesor_regular
@@ -163,16 +163,10 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             self.model.crear_consejero_directivo(dni, periodo, id_agrupacion_politica)
 
-        tabla_claustro = self.model.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
-
         # Verificar que se haya creado la entrada en la tabla consejero_directivo
-        self.assertSelectEquals('''SELECT id_agrupacion_politica, tipo FROM consejero_directivo
+        self.assertSelectEquals('''SELECT id_agrupacion_politica, claustro FROM consejero_directivo
                                    WHERE dni = ? AND periodo = ?''', (dni, periodo),
                                 (id_agrupacion_politica, claustro))
-
-        # Verificar que se haya creado la entrada en la tabla del claustro correspondiente
-        self.assertSelectIsNotEmpty('''SELECT * FROM %s
-                                       WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
 
     ################################################################################
     # Decano                                                                       #
@@ -287,16 +281,10 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             self.model.crear_consejero_superior(dni, periodo)
 
-        tabla_claustro = self.model.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
-
         # Verificar que se haya creado la entrada en la tabla consejero_superior
-        self.assertSelectEquals('''SELECT tipo FROM consejero_superior
+        self.assertSelectEquals('''SELECT claustro FROM consejero_superior
                                    WHERE dni = ? AND periodo = ?''', (dni, periodo), (claustro,))
 
-        # Verificar que se haya creado la entrada en la tabla del claustro correspondiente
-        self.assertSelectIsNotEmpty('''SELECT * FROM %s
-                                       WHERE dni = ? AND periodo = ?''' % tabla_claustro, (dni, periodo))
-    
     def test_registrar_voto_a_consejero_superior(self):
         dni_consejero_superior = 123
         periodo_consejero_superior = 2014
