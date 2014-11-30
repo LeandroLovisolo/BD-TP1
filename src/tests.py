@@ -41,7 +41,7 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
-                                (nombre, api.TIPO_ESTUDIANTE))
+                                (nombre, api.CLAUSTRO_ESTUDIANTES))
 
         # Verificar que se haya creado la entrada en la tabla estudiante
         self.assertSelectIsNotEmpty('SELECT * FROM estudiante WHERE dni = ?', (dni,))
@@ -58,14 +58,12 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
-                                (nombre, api.TIPO_GRADUADO))
+                                (nombre, api.CLAUSTRO_GRADUADOS))
 
         # Verificar que se haya creado la entrada en la tabla graduado
-        self.assertSelectEquals('SELECT claustro FROM graduado WHERE dni = ?', (dni,),
-                                (api.TIPO_GRADUADO_UBA,))
+        self.assertSelectEquals('SELECT universidad FROM graduado WHERE dni = ?', (dni,),
+                                (api.UBA,))
 
-        # Verificar que se haya creado la entrada en la tabla graduado_uba
-        self.assertSelectIsNotEmpty('SELECT * FROM graduado_uba WHERE dni = ?', (dni,))
 
     def test_empadronar_profesor(self):
         dni = 123
@@ -79,14 +77,12 @@ class TestModel(unittest.TestCase):
 
         # Verificar que se haya creado la entrada en la tabla empadronado
         self.assertSelectEquals('SELECT nombre, claustro FROM empadronado WHERE dni = ?', (dni,),
-                                (nombre, api.TIPO_PROFESOR))
+                                (nombre, api.CLAUSTRO_PROFESORES))
 
         # Verificar que se haya creado la entrada en la tabla profesor
-        self.assertSelectEquals('SELECT nacionalidad_universidad, claustro FROM profesor WHERE dni = ?', (dni,),
-                                (api.NACIONALIDAD_UNIVERSIDAD_PROFESOR, api.TIPO_PROFESOR_REGULAR))
+        self.assertSelectEquals('SELECT nacionalidad_universidad, cargo FROM profesor WHERE dni = ?', (dni,),
+                                (api.NACIONALIDAD_UNIVERSIDAD_PROFESOR, api.CARGO_PROFESOR_REGULAR))
 
-        # Verificar que se haya creado la entrada en la tabla profesor_regular
-        self.assertSelectIsNotEmpty('SELECT * FROM profesor_regular WHERE dni = ?', (dni,))
 
     ################################################################################
     # Consejo directivo                                                            #
@@ -125,13 +121,13 @@ class TestModel(unittest.TestCase):
                                 (votos_recibidos,))
 
     def test_crear_consejero_directivo_claustro_estudiantes(self):
-        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES)
+        self.crear_consejero_directivo(api.CLAUSTRO_ESTUDIANTES)
 
     def test_crear_consejero_directivo_claustro_graduados(self):
-        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS)
+        self.crear_consejero_directivo(api.CLAUSTRO_GRADUADOS)
 
     def test_crear_consejero_directivo_claustro_graduados(self):
-        self.crear_consejero_directivo(api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES)
+        self.crear_consejero_directivo(api.CLAUSTRO_PROFESORES)
 
     def crear_consejero_directivo(self, claustro):
         dni = 123
@@ -146,11 +142,11 @@ class TestModel(unittest.TestCase):
             self.model.crear_consejero_directivo(dni, periodo, 0)
 
         # Empadronar el DNI en el padrón correspondiente
-        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES:
+        if claustro == api.CLAUSTRO_ESTUDIANTES:
             self.model.empadronar_alumno(dni, nombre)
-        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS:
+        if claustro == api.CLAUSTRO_GRADUADOS:
             self.model.empadronar_graduado(dni, nombre)
-        if claustro == api.TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
+        if claustro == api.CLAUSTRO_PROFESORES:
             self.model.empadronar_profesor(dni, nombre)
 
         # Asegurar que se requiera un ID de agrupación política válido
@@ -250,13 +246,13 @@ class TestModel(unittest.TestCase):
     ################################################################################
 
     def test_crear_consejero_superior_claustro_estudiantes(self):
-        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES)
+        self.crear_consejero_superior(api.CLAUSTRO_ESTUDIANTES)
 
     def test_crear_consejero_superior_claustro_graduados(self):
-        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS)
+        self.crear_consejero_superior(api.CLAUSTRO_GRADUADOS)
 
     def test_crear_consejero_superior_claustro_graduados(self):
-        self.crear_consejero_superior(api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES)
+        self.crear_consejero_superior(api.CLAUSTRO_PROFESORES)
 
     def crear_consejero_superior(self, claustro):
         dni = 123
@@ -268,11 +264,11 @@ class TestModel(unittest.TestCase):
             self.model.crear_consejero_superior(dni, periodo)
 
         # Empadronar el DNI en el padrón correspondiente
-        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES:
+        if claustro == api.CLAUSTRO_ESTUDIANTES:
             self.model.empadronar_alumno(dni, nombre)
-        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS:
+        if claustro == api.CLAUSTRO_GRADUADOS:
             self.model.empadronar_graduado(dni, nombre)
-        if claustro == api.TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES:
+        if claustro == api.CLAUSTRO_PROFESORES:
             self.model.empadronar_profesor(dni, nombre)
 
         self.model.crear_consejero_superior(dni, periodo)

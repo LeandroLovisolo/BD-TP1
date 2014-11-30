@@ -2,28 +2,18 @@
 
 import sqlite3
 
-# Valores de la columna 'tipo' de la tabla 'empadronado'
-TIPO_ESTUDIANTE = 0
-TIPO_GRADUADO   = 1
-TIPO_PROFESOR   = 2
+# Valores de la columna 'claustro' de la tabla 'empadronado', 'consejero_directivo' y 'consejero_superior'
+CLAUSTRO_ESTUDIANTES = 0
+CLAUSTRO_GRADUADOS   = 1
+CLAUSTRO_PROFESORES  = 2
 
-# Valores de la columna 'tipo' de la tabla 'graduado'
-TIPO_GRADUADO_UBA              = 0
-TIPO_GRADUADO_OTRA_UNIVERSIDAD = 1
+# Valores de la columna 'universidad' de la tabla 'graduado'
+UBA              = 0
+OTRA_UNIVERSIDAD = 1
 
-# Valores de la columna 'tipo' de la tabla 'profesor'
-TIPO_PROFESOR_REGULAR = 0
-TIPO_PROFESOR_ADJUNTO = 1
-
-# Valores de la columna 'tipo' de la tabla 'consejero_directivo'
-TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES = TIPO_ESTUDIANTE
-TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS   = TIPO_GRADUADO
-TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES  = TIPO_PROFESOR
-
-# Valores de la columna 'tipo' de la tabla 'consejero_superior'
-TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES = TIPO_ESTUDIANTE
-TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS   = TIPO_GRADUADO
-TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES  = TIPO_PROFESOR
+# Valores de la columna 'cargo' de la tabla 'profesor'
+CARGO_PROFESOR_REGULAR = 0
+CARGO_PROFESOR_ADJUNTO = 1
 
 # Valor por defecto para la columna 'nombre' de la tabla 'facultad'
 NOMBRE_FACULTAD = 'Facultad de Ciencias Exactas y Naturales'
@@ -77,24 +67,20 @@ class model_test():
     ################################################################################
 
     def empadronar_alumno(self, dni, nombre): 
-        self.insertar_empadronado(dni, nombre, TIPO_ESTUDIANTE)
+        self.insertar_empadronado(dni, nombre, CLAUSTRO_ESTUDIANTES)
         self.execute_query('''INSERT INTO estudiante (dni, fecha_inscripcion)
                               VALUES (?, strftime('%s', 'now'))''', (dni,))
 
     def empadronar_graduado(self, dni, nombre):
-        self.insertar_empadronado(dni, nombre, TIPO_GRADUADO)
-        self.execute_query('''INSERT INTO graduado (dni, tipo)
-                              VALUES (?, ?)''', (dni, TIPO_GRADUADO_UBA))
-        self.execute_query('''INSERT INTO graduado_uba (dni)
-                              VALUES (?)''', (dni,))
+        self.insertar_empadronado(dni, nombre, CLAUSTRO_GRADUADOS)
+        self.execute_query('''INSERT INTO graduado (dni, universidad)
+                              VALUES (?, ?)''', (dni, UBA))
 
     def empadronar_profesor(self, dni,nombre):  
-        self.insertar_empadronado(dni, nombre, TIPO_PROFESOR)
-        self.execute_query('''INSERT INTO profesor (dni, nacionalidad_universidad, tipo)
-                              VALUES (?, ?, ?)''', (dni, NACIONALIDAD_UNIVERSIDAD_PROFESOR, TIPO_PROFESOR_REGULAR))
-        self.execute_query('''INSERT INTO profesor_regular (dni)
-                              VALUES (?)''', (dni,))
-    
+        self.insertar_empadronado(dni, nombre, CLAUSTRO_PROFESORES)
+        self.execute_query('''INSERT INTO profesor (dni, nacionalidad_universidad, cargo)
+                              VALUES (?, ?, ?)''', (dni, NACIONALIDAD_UNIVERSIDAD_PROFESOR, CARGO_PROFESOR_REGULAR))
+
     ################################################################################
     # Consejo directivo                                                            #
     ################################################################################
@@ -113,10 +99,8 @@ class model_test():
 
     def crear_consejero_directivo(self, dni, periodo, id_agrupacion_politica):
         claustro = self.obtener_claustro(dni)
-        tabla_claustro = self.obtener_tabla_consejero_directivo_dado_un_claustro(claustro)
-        self.execute_query('''INSERT INTO consejero_directivo (dni, periodo, id_agrupacion_politica, tipo)
+        self.execute_query('''INSERT INTO consejero_directivo (dni, periodo, id_agrupacion_politica, claustro)
                               VALUES (?, ?, ?, ?)''', (dni, periodo, id_agrupacion_politica, claustro))
-        self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
     ################################################################################
     # Decano                                                                       #
@@ -137,10 +121,8 @@ class model_test():
 
     def crear_consejero_superior(self, dni, periodo):
         claustro = self.obtener_claustro(dni)
-        tabla_claustro = self.obtener_tabla_consejero_superior_dado_un_claustro(claustro)
-        self.execute_query('''INSERT INTO consejero_superior (dni, periodo, tipo)
+        self.execute_query('''INSERT INTO consejero_superior (dni, periodo, claustro)
                               VALUES (?, ?, ?)''', (dni, periodo, claustro))
-        self.execute_query('INSERT INTO %s (dni, periodo) VALUES (?, ?)' % tabla_claustro, (dni, periodo))
 
     def registrar_voto_a_consejero_superior(self, dni_consejero_superior, periodo_consejero_superior, dni_consejero_directivo, periodo_consejero_directivo):
         self.execute_query('''INSERT INTO voto_a_consejero_superior
@@ -204,32 +186,14 @@ class model_test():
                 id = row[0]
         return id
 
-    def insertar_empadronado(self, dni, nombre, tipo):
+    def insertar_empadronado(self, dni, nombre, claustro):
         id_facultad = self.obtener_id_facultad_por_defecto()
-        self.execute_query('''INSERT INTO empadronado (dni, nombre, id_facultad, tipo)
-                              VALUES (?, ?, ?, ?)''', (dni, nombre, id_facultad, tipo))
+        self.execute_query('''INSERT INTO empadronado (dni, nombre, id_facultad, claustro)
+                              VALUES (?, ?, ?, ?)''', (dni, nombre, id_facultad, claustro))
 
     def obtener_claustro(self, dni):
         with self.connector as c:
-            c.execute('SELECT tipo FROM empadronado WHERE dni = ?', (dni,))
+            c.execute('SELECT claustro FROM empadronado WHERE dni = ?', (dni,))
             row = c.fetchone()
             assert row is not None, 'El DNI %d no está empadronado.' % dni
             return row[0]
-
-    def obtener_tabla_consejero_directivo_dado_un_claustro(self, claustro):
-        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_ESTUDIANTES:
-            return 'consejero_directivo_claustro_estudiantes'
-        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_GRADUADOS:
-            return 'consejero_directivo_claustro_graduados'
-        if claustro == TIPO_CONSEJERO_DIRECTIVO_CLAUSTRO_PROFESORES:
-            return 'consejero_directivo_claustro_profesores'
-        raise Error('Claustro inválido')
-
-    def obtener_tabla_consejero_superior_dado_un_claustro(self, claustro):
-        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_ESTUDIANTES:
-            return 'consejero_superior_claustro_estudiantes'
-        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_GRADUADOS:
-            return 'consejero_superior_claustro_graduados'
-        if claustro == TIPO_CONSEJERO_SUPERIOR_CLAUSTRO_PROFESORES:
-            return 'consejero_superior_claustro_profesores'
-        raise Error('Claustro inválido')
