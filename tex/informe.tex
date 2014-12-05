@@ -253,7 +253,7 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
   nombre,
   fechaDeNacimiento,
   \fk{idFacultad},
-  tipo
+  claustro
 }{
   \clavespkck{DNI}
 }
@@ -267,7 +267,7 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 
 \relacion{Graduado}{
   \pkfk{DNI},
-  tipo
+  universidad
 }{
   \clavespkckfk{DNI}
 }
@@ -295,7 +295,7 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 \relacion{Consejero Directivo}{
   \pk{\fk{DNI}, períodoConsejeroDirectivo},
   \fk{idAgrupación},
-  tipo
+  claustro
 }{
   \clavespkck{(DNI, períodoConsejeroDirectivo)} \\
   \clavesfk{DNI, idAgrupación}
@@ -357,7 +357,7 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 
 \relacion{Consejero Superior}{
   \pk{\fk{DNI}, períodoConsejeroSuperior},
-  tipo
+  claustro
 }{
   \clavespkck{(DNI, períodoConsejeroSuperior)} \\
   \clavesfk{DNI}
