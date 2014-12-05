@@ -9,7 +9,7 @@ CREATE TABLE `empadronado` (
     `nombre`              TEXT,
     `fecha_de_nacimiento` INTEGER,
     `id_facultad`         INTEGER,
-    `claustro`                INTEGER,
+    `claustro`            INTEGER,
     PRIMARY KEY(dni),
     FOREIGN KEY(id_facultad) REFERENCES facultad(id)
 );
@@ -48,7 +48,7 @@ CREATE TABLE `agrupacion_politica` (
 );
 CREATE TABLE `agrupacion_politica_se_presenta_durante_calendario_electoral` (
     `id_agrupacion_politica` INTEGER,
-    `periodo`                  INTEGER,
+    `periodo`                INTEGER,
     `votos_recibidos`        INTEGER,
     PRIMARY KEY(id_agrupacion_politica, periodo),
     FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id),
@@ -58,7 +58,7 @@ CREATE TABLE `consejero_directivo` (
     `dni`                    INTEGER,
     `periodo`                INTEGER,
     `id_agrupacion_politica` INTEGER,
-    `claustro`                   INTEGER,
+    `claustro`               INTEGER,
     PRIMARY KEY(dni, periodo),
     FOREIGN KEY(dni) REFERENCES empadronado(dni),
     FOREIGN KEY(id_agrupacion_politica) REFERENCES agrupacion_politica(id)
@@ -79,8 +79,8 @@ CREATE TABLE `voto_a_decano` (
     FOREIGN KEY(dni_consejero_directivo, periodo_consejero_directivo) REFERENCES consejero_directivo(dni, periodo)
 );
 CREATE TABLE `consejero_superior` (
-    `dni`                    INTEGER,
-    `periodo`                INTEGER,
+    `dni`                        INTEGER,
+    `periodo`                    INTEGER,
     `claustro`                   INTEGER,
     PRIMARY KEY(dni, periodo),
     FOREIGN KEY(dni) REFERENCES empadronado(dni)
