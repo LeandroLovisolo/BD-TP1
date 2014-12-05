@@ -293,18 +293,6 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
   \clavespkckfk{DNI}
 }
 
-\relacion{Profesor regular}{
-  \pkfk{DNI}
-}{
-  \clavespkckfk{DNI}
-}
-
-\relacion{Profesor adjunto}{
-  \pkfk{DNI}
-}{
-  \clavespkckfk{DNI}
-}
-
 \relacion{Consejero Directivo}{
   \pk{\fk{DNI}, períodoConsejeroDirectivo},
   \fk{idAgrupación},
