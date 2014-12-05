@@ -34,7 +34,6 @@ CREATE TABLE `graduado_otra_universidad` (
 CREATE TABLE `profesor` (
     `dni`                      INTEGER,
     `nacionalidad_universidad` TEXT,
-    `cargo`                     INTEGER,
     PRIMARY KEY(dni),
     FOREIGN KEY(dni) REFERENCES empadronado(dni) ON DELETE CASCADE
 );
