@@ -274,12 +274,6 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
   \clavespkckfk{DNI}
 }
 
-\relacion{Graduado de la UBA}{
-  \pkfk{DNI}
-}{
-  \clavespkckfk{DNI}
-}
-
 \relacion{Graduado de otra universidad}{
   \pkfk{DNI},
   inicioActividades
@@ -289,7 +283,7 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 
 \relacion{Profesor}{
   \pkfk{DNI},
-  nacionalidadUniversidad
+  cargo
 }{
   \clavespkckfk{DNI}
 }
@@ -301,24 +295,6 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
 }{
   \clavespkck{(DNI, períodoConsejeroDirectivo)} \\
   \clavesfk{DNI, idAgrupación}
-}
-
-\relacion{Consejero Directivo por el Claustro de Estudiantes}{
-  \pkfk{DNI, períodoConsejeroDirectivo}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
-}
-
-\relacion{Consejero Directivo por el Claustro de Graduados}{
-  \pkfk{DNI, períodoConsejeroDirectivo}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
-}
-
-\relacion{Consejero Directivo por el Claustro de Profesores}{
-  \pkfk{DNI, períodoConsejeroDirectivo}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroDirectivo)}
 }
 
 \relacion{Agrupación política}{
@@ -365,29 +341,11 @@ Utilizaremos las herramientas vistas en la materia, el modelado basado en el Dia
   \clavesfk{DNI}
 }
 
-\relacion{Consejero Superior por el Claustro de Estudiantes}{
-  \pkfk{DNI, períodoConsejeroSuperior}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
-}
-
-\relacion{Consejero Superior por el Claustro de Profesores}{
-  \pkfk{DNI, períodoConsejeroSuperior}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
-}
-
-\relacion{Consejero Superior por el Claustro de Graduados}{
-  \pkfk{DNI, períodoConsejeroSuperior}
-}{
-  \clavespkckfk{(DNI, períodoConsejeroSuperior)}
-}
-
 \relacion{VotoAConsejeroSuperior}{
   \pk{\fk{DNIConsejeroSuperior, períodoConsejeroSuperior},
       \fk{DNIConsejeroDirectivo, períodoConsejeroDirectivo}}
 }{
-  \clavespkck{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo períodoConsejeroDirectivo)} \\
+  \clavespkck{(DNIConsejeroSuperior, períodoConsejeroSuperior, DNIConsejeroDirectivo, períodoConsejeroDirectivo)} \\
   \clavesfk{(DNIConsejeroSuperior, períodoConsejeroSuperior), (DNIConsejeroDirectivo, períodoConsejeroDirectivo)}
 }
 
